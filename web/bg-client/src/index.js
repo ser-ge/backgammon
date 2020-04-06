@@ -69,13 +69,36 @@ class Board extends React.Component {
   constructor(props) {
       super(props);
       this.state = {
-          squares : [],
-      };
-  }
+          positions : [],
+          pSign: 1,
+          dice: [0,0],
+          game_id: ''
+};
+}
+handleChange = (event) => {
+    event.preventDefault()
+    this.setState({game_id: event.target.value});
+   
+}
+
+handleSubmit = (event) => {
+    event.preventDefault()
+    socket.emit('join', this.state.game_id)
+    socket.on('join_room', this.getData)
+    this.setState({pSign: -1})
+
+}
+
+handleNewGameClick = () => {
+    socket.emit('create')
+    socket.on('join_room', this.getData)
+    
+}
+
 
   getData = gameData => {
-
-      this.setState({squares : gameData.positions})
+    console.log(gameData)
+      this.setState({...gameData})
   }
 
   componentDidMount(){
@@ -83,16 +106,35 @@ class Board extends React.Component {
         console.log('Websocket connected!');
     });
 
-    socket.emit('create');
-    console.log('mounted');
+    
     socket.on('join_room', this.getData);
+    socket.on('move', this.getData)
+    socket.on('roll_dice', this.getData)
 }
 
   handleClick(id) {
-      const points = this.state.squares.slice();
-      points[id] -= 1 ;
-      this.setState({squares : points})
+      const points = this.state.positions.slice();
+      socket.emit('move',
+      {player_sign:this.state.pSign,
+        start: id,
+        roll: this.state.dice.pop(),
+        room:this.state.game_id
+    }) ;
+    socket.on('move', this.getData)
+    
   }
+
+  handleDiceThrow(){
+    console.log('rolling')
+    socket.emit('roll_dice', {player_sign : this.state.pSign,
+                              room : this.state.game_id,
+     })
+
+     
+
+  }
+
+
   renderSquares(number,half,i) {
 
     const orient = half == 1 ? "scale(1,-1)" : "scale(1,1)"
@@ -108,6 +150,7 @@ class Board extends React.Component {
         );
   }
 
+
   render() {
     const status = 'Next player: X';
 
@@ -115,15 +158,18 @@ class Board extends React.Component {
       <div>
         <div className="status">{status}</div>
         <div className="board-row">
-        {this.state.squares.slice(1,13).map((number,i) => this.renderSquares(number,1,i))}
+        {this.state.positions.slice(1,13).map((number,i) => this.renderSquares(number,1,i))}
         </div>
-        <div>    
-            ----
+        <div className="board-row">    
+         <Dice faceValue={this.state.dice[0]} onClick={()=> this.handleDiceThrow()}/>
+         <div className="board-row">         <Dice faceValue={this.state.dice[1]} onClick={()=> this.handleDiceThrow()}/>
+</div>
         </div>
         <div className="board-row">
-        {this.state.squares.slice(13,25).map((number,i) => this.renderSquares(number,2,i))}
+        {this.state.positions.slice(13,25).map((number,i) => this.renderSquares(number,2,i))}
         </div>
-
+        <GameIDForm value={this.state.game_id} handleChange={this.handleChange} handleSubmit={this.handleSubmit}/>
+        <NewGameButton handleNewGameClick={this.handleNewGameClick}/>
       </div>
     );
   }
@@ -136,6 +182,7 @@ class Game extends React.Component {
         <div className="game-board">
           <Board />
         </div>
+
         <div className="game-info">
           <div>{/* status */}</div>
           <ol>{/* TODO */}</ol>
@@ -145,8 +192,46 @@ class Game extends React.Component {
   }
 }
 
+class Dice extends React.Component {
+  
+    render() {
+    //   if(this.props.faceValue == null) return ;
+      const face = "&#x" + String(2680 + this.props.faceValue -1) + ";"
+      return (
+        <div>
+             
+          <div onClick={this.props.onClick} id="diceFace" dangerouslySetInnerHTML={{ __html: `${face}` }}></div>           
+        </div>
+      );
+    }
+  }
+
+class GameIDForm extends React.Component {
+
+render() {
+    return (
+    <form onSubmit={this.props.handleSubmit}>
+        <label>
+        Name:
+        <input type="text" value={this.props.value} onChange={this.props.handleChange} />
+        </label>
+        <input type="submit" value="Submit" />
+    </form>
+    );
+}
+}
 
 
+class NewGameButton extends React.Component {
+  
+    render() {
+      return (
+        <button onClick={this.props.handleNewGameClick}>
+          New Game
+        </button>
+      );
+    }
+}
 ReactDOM.render(
   <Game />,
   document.getElementById('root')

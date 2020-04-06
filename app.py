@@ -20,35 +20,45 @@ def messageReceived(methods=['GET', 'POST']):
 
 @socketio.on('create')
 def create_game():
-    print('createing game')
+    print('creating game')
     game = Board()
     room = game.id
 
     ROOMS[room] = game
-
+    game.players[1].connected = True
     join_room(room)
-    
     emit('join_room', game.to_json())
 
 @socketio.on('join')
-def on_join(data):
-    room = data[room]
-    game_data = ROOMS[room].to_json()
+def on_join(room):
+    game = ROOMS[room]
+    game.players[-1].connected = True
     join_room(room)
-    send(game_data, room=room)
+    emit('join_room', game.to_json())
+
+@socketio.on('getData')
+def on_get_data(room):
+    game = ROOMS[room]
+    emit('getData', game.to_json())
+
 
 @socketio.on('roll_dice')
-def on_roll(player_sign, room):
+def on_roll(data):
+    room = data['room']
     game = ROOMS[room]
+    player_sign = data['player_sign']
+
     game.roll_dice(player_sign)
-    emit(game.to_json(), room=room)
+    emit('roll_dice',game.to_json(), room=room)
 
 @socketio.on('move')
-def on_move(player_sign, move, room):
+def on_move(data):
+    room = data['room']
     game = ROOMS[room]
-    move = (move['start'], move['roll'])
+    player_sign = data['player_sign']
+    move = (int(data['start']), int(data['roll']))
     game.validate_move(player_sign,move)
-    emit(game.to_json(), room=room)
+    emit('move', game.to_json(), room=room)
 
 
 

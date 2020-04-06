@@ -30,9 +30,10 @@ class Board:
         self.beared_off= {1:0, -1:0}
         self.players = {1:Player('white',1), -1:Player('black',-1)}
         self.turn = 1
-        self.dice = []
+        self.dice = [1,4]
         self.id = self.generate_id()
         self.valid_moves = []
+
 
     def roll_dice(self, player_sign):
 
@@ -63,8 +64,10 @@ class Board:
     #     '''
         start_position = move[0]
         roll = move[1]
+        print("the start: " ,start_position)
+        print("the roll: " ,roll)
 
-        assert roll in self.dice, "You didn't roll that!"
+        assert roll in self.dice, print(self.dice)
 
 
         bar = 0 if player == 1 else 25
@@ -143,7 +146,7 @@ class Board:
 
     def print_board(self):
         print("Board ", self.state)
-        print("beared_off", self.removed)
+        print("beared_off", self.beared_off)
 
     def to_json(self):
         return {'game_id':self.id,
@@ -170,14 +173,15 @@ class Player:
         assert color == 'white' or color == 'black'
         self.color = color
         self.sign = sign
+        self.connected = False
 
     
     def to_json(self):
 
-        return {self.id : {
+        return {'user_id': self.id,
                         'color':self.color,
                         'sign':self.sign
-        }}
+        }
 
     @classmethod
     def generate_id(cls):
