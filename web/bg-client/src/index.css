@@ -1,52 +1,66 @@
 body {
-  font: 14px "Century Gothic", Futura, sans-serif;
-  margin: 20px;
-}
-
-ol, ul {
-  padding-left: 30px;
-}
-
-.board-row:after {
-  clear: both;
-  content: "";
-  display: table;
-}
-
-#diceFace {
-    font-size: 100px;
+    font: 14px "Century Gothic", Futura, sans-serif;
+    margin: 20px;
   }
   
-.status {
-  margin-bottom: 10px;
-}
+  ol, ul {
+    padding-left: 30px;
+  }
+  
+  .board-row:after {
+    clear: both;
+    content: "";
+    display: table;
+  }
 
-.triangle {
-    position: relative,
+    
+  .board-row{
+    display: flex;
+    background-color: rgb(243, 243, 243)
+    
+  }
+  
+  #diceFace {
+      font-size: 100px;
+    }
+    
+  .status {
+    margin-bottom: 10px;
+  }
+  
+  .triangle {
+    background-color: rgb(243, 243, 243);
+    border: none;
+  
+  }
 
-}
+  
+  
+  .circle {
+      position:absolute;
+      z-index: 2
+  }
+  .svg-triangle {
+      position: relative;
+      z-index: 1
+  }
+  .square:focus {
+    outline: none;
+  }
+  
+  .kbd-navigation .square:focus {
+    background: #ddd;
+  }
+  button:focus {outline:0;}
 
-.circle {
-    position:absolute;
-    z-index: 2
-}
-.svg-triangle {
-    position: relative;
-    z-index: 1
-}
-.square:focus {
-  outline: none;
-}
-
-.kbd-navigation .square:focus {
-  background: #ddd;
-}
-
-.game {
-  display: flex;
-  flex-direction: row;
-}
-
-.game-info {
-  margin-left: 20px;
-}
+  .game {
+    display: inline-block;
+    flex-direction: column;
+    align-items: center;
+    /* background-image: url(./board.jpeg); */
+  }
+  
+  .game-info {
+    margin-left: 20px;
+  }
+  

@@ -3,133 +3,123 @@ import string
 
 
 
-white = [0 for i in range(26)]
-
-p = {1:0,6:5,8:3,13:5,24:2}
-
-for key, value in p.items():
-    white[key] = value
-
-black = white[:]
-black.reverse()
-
-print(white)
-board = [i - j for i, j in zip(black, white)]
-
-
-rules = {"positions" : board}
-
-
-
 class Board:
 
-    def __init__(self, rules=rules):
+    def __init__(self):
         
         
-        self.state = rules['positions']
+        self.state = [0, 2, 0, 0, 0, 0, -5, 0, -3, 0, 0, 0, 5, -5, 0, 0, 0, 3, 0, 5, 0, 0, 0, 0, -2, 0]
         self.beared_off= {1:0, -1:0}
         self.players = {1:Player('white',1), -1:Player('black',-1)}
         self.turn = 1
-        self.dice = [1,4]
+        self.dice = [0,0]
         self.id = self.generate_id()
         self.valid_moves = []
+        self.dice_rolled = False
+        self.dice_hist =[]
 
 
     def roll_dice(self, player_sign):
 
-        roll = [random.choice(range(1,7)) for _ in range(2)]
+        if player_sign == self.turn and self.dice_rolled == False:
+            roll = [random.choice(range(1,7)) for _ in range(2)]
 
-        if roll[0] == roll[1]:
-            roll += roll
+            if roll[0] == roll[1]:
+                roll += roll
 
-        self.dice = roll
+            self.dice = roll
+            self.dice_rolled = True
 
     def validate_move(self, player, move, execute=True):
 
-
-        assert player == self.turn, "Not your turns!"
-
-
-        self.print_board()
-
-    # ''' input, int player : 1 ,-1
-    #     tuple move (start_positon, dice_roll)
-        
-    #     player 1 home:  [18,24]
-    #     player -1 home: [1,6]
-
-    #     player 1 board 0
-    #     player -1 board 25
-        
-    #     '''
-        start_position = move[0]
-        roll = move[1]
-        print("the start: " ,start_position)
-        print("the roll: " ,roll)
-
-        assert roll in self.dice, print(self.dice)
+        try:
+            assert player == self.turn, "Not your turns!"
 
 
-        bar = 0 if player == 1 else 25
-        op_bar = 0 if player == -1 else 25
+            self.print_board()
 
-        home = range(16,25) if player == 1 else range(1,7)
-
-        players_pieces = [max(0, player*i) for i in self.state]
-
-        outside_home = [pieces for position, pieces in enumerate(players_pieces) if position not in home]
-
-
-        if self.state[bar] == 0 and sum(outside_home) == 0:
-            all_home = True
+        # ''' input, int player : 1 ,-1
+        #     tuple move (start_positon, dice_roll)
             
-        else:
-            all_home = False
+        #     player 1 home:  [18,24]
+        #     player -1 home: [1,6]
 
-
-        if self.state[bar] != 0 and start_position != bar:
-            return False
-
-        if not player*self.state[start_position] > 0: return False
-
-        end_positon = start_position + player*roll
-
-        if all_home and end_positon not in range(1,25) and execute:
-            self.state[start_position] -= 1 * player
-            self.beared_off[player] += 1
+        #     player 1 board 0
+        #     player -1 board 25
             
+        #     '''
+            start_position = move[0]
+            roll = move[1]
+            print("the start: " ,start_position)
+            print("the roll: " ,roll)
 
-        else:
-            
-            if not end_positon in range(1,25): return False
-            
-            if not player * self.state[end_positon] >= -1: return False
+            assert roll in self.dice, print(self.dice)
 
-            print("moving")
-            
+
+            bar = 0 if player == 1 else 25
+            op_bar = 0 if player == -1 else 25
+
+            home = range(16,25) if player == 1 else range(1,7)
+
+            players_pieces = [max(0, player*i) for i in self.state]
+
+            outside_home = [pieces for position, pieces in enumerate(players_pieces) if position not in home]
+
+
+            if self.state[bar] == 0 and sum(outside_home) == 0:
+                all_home = True
+                
+            else:
+                all_home = False
+
+
+            if self.state[bar] != 0 and start_position != bar:
+                return False
+
+            if not player*self.state[start_position] > 0: return False
+
+            end_positon = start_position + player*roll
+
+            if all_home and end_positon not in range(1,25) and execute:
+                self.state[start_position] -= 1 * player
+                self.beared_off[player] += 1
+                
+
+            else:
+                
+                if not end_positon in range(1,25): return False
+                
+                if not player * self.state[end_positon] >= -1: return False
+
+                print("moving")
+                
+
+                if execute:
+                    self.state[start_position] -= 1 * player
+
+
+                    
+                    if self.state[end_positon] == -player:
+                        self.state[op_bar] +=1
+                        self.state[end_positon] += player
+                
+                    
+                    self.state[end_positon] += 1 * player
 
             if execute:
-                self.state[start_position] -= 1 * player
+                self.dice_hist.append(roll)
+                self.dice.remove(roll)
 
+                if len(self.dice) == 0:
+                    self.turn = self.turn * -1
+                    self.dice_rolled = False
 
-                
-                if self.state[end_positon] == -player:
-                    self.state[op_bar] +=1
-                    self.state[end_positon] += player
-            
-                
-                self.state[end_positon] += 1 * player
+            self.print_board()
 
-        if execute:
-            self.dice.remove(roll)
-            if len(self.dice) == 0:
-                self.turn = self.turn * -1
+            return True
 
-        self.print_board()
-
-        return True
-
-
+        except AssertionError:
+            return False
     
 
     def find_all_valid_moves(self,player):
@@ -150,12 +140,13 @@ class Board:
 
     def to_json(self):
         return {'game_id':self.id,
-                'positions': self.state,
+                'points': [{'value':value, 'id': i} for i, value in enumerate(self.state)],
                 'turn': self.turn,
                 'players': {**self.players[1].to_json(), **self.players[-1].to_json() },
                 'beared_off': self.beared_off,
                 'dice': self.dice,
-                'valid_moves': self.valid_moves
+                'valid_moves': self.valid_moves,
+                'diceHist' : self.dice_hist
                 }
 
 
