@@ -9,7 +9,7 @@ class Board:
         
         
         self.state = [0, 2, 0, 0, 0, 0, -5, 0, -3, 0, 0, 0, 5, -5, 0, 0, 0, 3, 0, 5, 0, 0, 0, 0, -2, 0]
-        self.beared_off= {1:0, -1:0}
+        self.beared_off= {1:1, -1:1}
         self.players = {1:Player('white',1), -1:Player('black',-1)}
         self.turn = 1
         self.dice = [0,0]
@@ -143,7 +143,7 @@ class Board:
                 'points': [{'value':value, 'id': i} for i, value in enumerate(self.state)],
                 'turn': self.turn,
                 'players': {**self.players[1].to_json(), **self.players[-1].to_json() },
-                'beared_off': self.beared_off,
+                'bearedOff': { key: list(range(value)) for key, value in self.beared_off.items()},
                 'dice': self.dice,
                 'valid_moves': self.valid_moves,
                 'diceHist' : self.dice_hist

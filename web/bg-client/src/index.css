@@ -28,6 +28,12 @@ body {
   
   }
 
+  .beared-checker {
+    width: 90%;
+    height: 90%;
+  
+  }
+
  
   
   .circle {
@@ -53,21 +59,69 @@ body {
     align-items: center;
     /* background-image: url(./board.jpeg); */
   }
+
+  .board {
+    display: grid;
+    grid-template-columns: 1fr 0.1fr;
+    grid-template-rows: 1fr;
+    gap: 10px;
+  }
+
+  .beared-off {
+    display: grid;
+    grid-template-rows: 1fr 0.1fr 1fr;
+    grid-column: 2;
+
+    align-self: stretch;
+    display: grid;
+    background-image: url(bar2.jpeg);
+    justify-items: center;
+    align-items: center;
+
+  }
+
+  .beared-off-section {
+    background-image: url(board.jpg);
+    background-size: cover;
+    height: 90%;
+    width: 80%;
+    display: grid;
+    grid-template-rows: repeat(15,1fr);
+    grid-template-columns: 1;
+    align-items: center;
+    justify-items: center;
+    direction: rtl;
+  }
+
+  .beared-off-section.top {
+    grid-row: 1;
+
+  }
+  .beared-off-section.bottom {
+    grid-row: 3;
+   
+  }
+  
   .game-back-board {
     background-image: url(bar2.jpeg);
     background-size: cover;
     padding: 20px;
+    grid-column: 1;
 
   }
-  .game-board {
+  .centre-board {
     display: grid;
     grid-template-columns:repeat(13, 1fr);
     grid-template-rows:  1fr 0.5fr 1fr ;
     gap: 0px;
-    align-items: center;
+    /* align-items: center; */
     background-image: url(board.jpg);
     background-size: cover;
+    justify-items: center;
+    
   }
+
+
 
   .points-top {
     grid-row: 1;
@@ -119,13 +173,19 @@ body {
   
   .dice {
     grid-row: 2;
-    grid-column: 4/5;
+    grid-column: 1/7;
+    align-self: center;
+    
+    
 
   }
 
-  #diceFace {
+  .diceFace {
     font-size: 100px;
     color: black;
+    background-color: ;
+    height: 20%;
+
   }
 
   
