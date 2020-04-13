@@ -7,34 +7,28 @@ body {
     padding-left: 30px;
   }
   
-  .board-row:after {
+  /* .board-row:after {
     clear: both;
     content: "";
     display: table;
-  }
+  } */
 
-    
-  .board-row{
-    display: flex;
-    background-color: rgb(243, 243, 243)
-    
-  }
   
-  #diceFace {
-      font-size: 100px;
-    }
+  
     
   .status {
     margin-bottom: 10px;
   }
   
   .triangle {
-    background-color: rgb(243, 243, 243);
     border: none;
+    display: block;
+    margin: auto;
+    background-color: inherit;
   
   }
 
-  
+ 
   
   .circle {
       position:absolute;
@@ -48,17 +42,92 @@ body {
     outline: none;
   }
   
-  .kbd-navigation .square:focus {
+  /* .kbd-navigation .square:focus {
     background: #ddd;
-  }
+  } */
   button:focus {outline:0;}
 
   .game {
-    display: inline-block;
+    display: grid ;
     flex-direction: column;
     align-items: center;
     /* background-image: url(./board.jpeg); */
   }
+  .game-back-board {
+    background-image: url(bar2.jpeg);
+    background-size: cover;
+    padding: 20px;
+
+  }
+  .game-board {
+    display: grid;
+    grid-template-columns:repeat(13, 1fr);
+    grid-template-rows:  1fr 0.5fr 1fr ;
+    gap: 0px;
+    align-items: center;
+    background-image: url(board.jpg);
+    background-size: cover;
+  }
+
+  .points-top {
+    grid-row: 1;
+    align-items: center;
+    display: grid;
+    
+  }
+
+  .points-bottom {
+    grid-row: 3;
+    align-items: center;
+    display: block;
+  }
+
+
+  .bar {
+
+    background-image: url(bar2.jpeg);
+    background-size:cover ;
+    
+  }
+
+  .bar.centre {
+    grid-row: 1/5;
+    grid-column: 7;
+    align-self: stretch;
+    display: grid;
+    grid-template-columns: 1fr 0.7fr 1fr;
+
+  }
+
+  .bar.top {
+    grid-row: 1;
+    grid-column: 1/15;
+    align-self: stretch;
+    display: grid;
+    grid-template-columns: 1fr 0.5fr 1fr;
+
+  }
+
+
+
+
+  .bar-gap {
+    grid-column: 2;
+    background-color: white;
+   
+  }
+  
+  .dice {
+    grid-row: 2;
+    grid-column: 4/5;
+
+  }
+
+  #diceFace {
+    font-size: 100px;
+    color: black;
+  }
+
   
   .game-info {
     margin-left: 20px;

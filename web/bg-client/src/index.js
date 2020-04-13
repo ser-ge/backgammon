@@ -87,25 +87,34 @@ handleNewGameClick = () => {
   render() {
     const status = 'Next player: X';
     return (
+      <div>
+        <div className="game-back-board">
         <div className="game-board">
     
-        <div className="board-row">
-        <Points points={this.state.points.slice(1,13)} handlePointClick={this.handlePointClick} orient={'down'}/>
-        </div>
 
-        <div className="board-row">
+        <Points row={"points-top"}  points={this.state.points.slice(1,13)} handlePointClick={this.handlePointClick} orient={'down'}/>
+
+
+
         <TwoDice dice={this.state.dice} handleDiceThrow={this.handleDiceThrow}/>
-        </div>
 
-        <div className="board-row">
-        <Points points={this.state.points.slice(13,25)} handlePointClick={this.handlePointClick} orient={'up'}/>
-        </div>
 
-        <div className="board-row">    
-        <GameIDForm value={this.state.game_id} handleChange={this.handleChange} handleSubmit={this.handleSubmit}/>
-        <NewGameButton handleNewGameClick={this.handleNewGameClick}/>
+        <Points row={"points-bottom"} points={this.state.points.slice(13,25)} handlePointClick={this.handlePointClick} orient={'up'}/>
+
+        <div className="bar centre"><div className="bar-gap"></div>sdf</div>
+        {/* <div className="bar left"></div>
+        <div className="bar right"></div>
+        <div className="bar top"></div>
+        <div className="bar bottom"></div> */}
+        
       </div>
-      </div>
+   
+    </div>
+       <div className="board-row">    
+       <GameIDForm value={this.state.game_id} handleChange={this.handleChange} handleSubmit={this.handleSubmit}/>
+       <NewGameButton handleNewGameClick={this.handleNewGameClick}/>
+     </div>
+     </div>
       );
   }
 }

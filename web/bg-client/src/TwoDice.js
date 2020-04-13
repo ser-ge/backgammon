@@ -12,7 +12,7 @@ export default class TwoDice extends React.Component {
     render() {
         
       return (
-        <div>
+        <div className="dice">
              
         <Dice key={0} faceValue={this.props.dice[0]} handleDiceThrow={this.props.handleDiceThrow} />
         <Dice key={1} faceValue={this.props.dice[1]} handleDiceThrow={this.props.handleDiceThrow} /> 
