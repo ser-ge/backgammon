@@ -4,13 +4,19 @@ export default class GameIDForm extends React.Component {
 
     render() {
         return (
-        <form onSubmit={this.props.handleSubmit}>
+        <form className={"sdbutton"} style={style} onSubmit={this.props.handleSubmit}>
             <label>
-            Name:
+            Game ID:
             <input type="text" value={this.props.value} onChange={this.props.handleChange} />
             </label>
-            <input type="submit" value="Submit" />
+            <input type="submit" value="Join Game" />
         </form>
         );
     }
     }
+
+    var style = {
+        display : "grid",
+        alignItems : "centre",
+        justifyItems: "centre",
+      }

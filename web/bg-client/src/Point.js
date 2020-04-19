@@ -1,18 +1,20 @@
 import React from 'react';
 
+
 export default class Point  extends React.Component {
 
    
 
     drawCheckers(value) {
 
-        const height = 300
-        const width = 50
-        const r = 20
+        const height = 100
+        const width = 100
+        const r = 30
+      
 
         function offset(count) {
             return (
-                (count+0.5)*r*2
+                (count+0.5)*r*2 +2
             )
         }
 
@@ -20,13 +22,14 @@ export default class Point  extends React.Component {
         // console.log(checkers);
         return (checkers.map((e) => {
             return (
+
             <circle 
-            cx={width/2} 
-            cy={height - offset(e)} 
-            r={r} 
+            cx={width/2+"%"} 
+            cy={height - offset(e) + "%"} 
+            r={r + "%"} 
             stroke="grey" 
-            stroke-width="5" 
-            fill={value > 0 ? 'white' : 'black'}/>
+            stroke-width="2" 
+            fill={value > 0 ? 'ivory' : 'black'}/>
                 
             )
 
@@ -34,17 +37,55 @@ export default class Point  extends React.Component {
 
         )};  
   
-    getPointStyle = (id) => {
+    getSvgPointStyle = (id) => {
         return {
         className : "svg-triangle",
-        version : "1.1",
-        width :  50,
-        height : 300,
-        r : 20,
+        
+        width :  "100%",
+        height : "100%",
         transform : (id > 12 ? "scale(1,1)" : 'scale(1,-1)') , 
-        fill : id % 2 == 0 ? 'white' : 'black'  
+        fill : id % 2 == 0 ? 'ivory' : 'black',
+        // display : "block",
+        // position : "absolute",
+        bottom : "0%",
+        left : "25%",
+        zIndex : "2"
+        
+
+
         }
-    }  
+    }
+
+    getSvgCheckersStyle = (id) => {
+      return {
+        position:"absolute",
+        transform : (id > 12 ? "scale(1,1)" : 'scale(1,-1)'),
+        width :  "100%",
+        height : "100%",
+        top : "0%",
+        left : "0%",
+        zIndex : "10"
+
+      }
+    }
+
+    getPointStyle = (id) => {
+      return {
+        className : "point",
+        gridRow : id < 13 ? "1" : "3",
+        // display : "grid",
+        alignItems: "centre",
+        margin: "none",
+        border: "none",
+        backgroundColor: "inherit",
+        height: "100%",
+        width: "100%",
+        position: "relative"
+      }
+
+    }
+
+
     render() {
 
     const {value, id} = this.props.point;
@@ -56,19 +97,23 @@ export default class Point  extends React.Component {
     return (
 
       <button 
-      className="triangle" 
       onClick={this.props.onClick.bind(this,id)}
-      width={50}
+      width={"100%"}
+      style={this.getPointStyle(id)}
       >
-        <svg  style={this.getPointStyle(id)} >
-        <polygon points="25,0 50,300 0,300" />
-        {this.drawCheckers(value)}
+        <svg xmlns={"http://www.w3.org/2000/svg"} viewBox={"0 0 100 100"} preserveAspectRatio={"none"} style={this.getSvgPointStyle(id)} >
+        <polygon points="50,0 90,100 10,100" />
         </svg> 
+        <svg xmlns={"http://www.w3.org/2000/svg"} viewBox={"0 0 100 100"} preserveAspectRatio="xMaxYMax" style={this.getSvgCheckersStyle(id)}>
+        {this.drawCheckers(value)}
+        </svg>
       </button>
 
     );
   }
 }
+
+
 
 
 // renderSquares(number,half,i) {

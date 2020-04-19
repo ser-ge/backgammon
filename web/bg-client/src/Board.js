@@ -1,18 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import socketIOClient from "socket.io-client";
+
 import './index.css';
 import Points from './Points'
 import BearedOff from './BearedOff'
 import Square from './Point'
-import NewGameButton from './NewGameButton'
 import GameIDForm from './GameIDForm'
 import TwoDice from './TwoDice';
 
 
-let endPoint = 'http://localhost:5000'
 
-var socket = socketIOClient(endPoint);
 
 
 export default class Board extends React.Component {
@@ -20,8 +17,7 @@ export default class Board extends React.Component {
       super(props);
       this.state = {
           points : [],
-          pSign: 1,
-          dice: [6,6],
+          dice: [,],
           game_id: '',
           move: [],
           moves:[],
@@ -29,26 +25,22 @@ export default class Board extends React.Component {
           bearedOff: {'1':[], '-1':[],}
 };
 }
+
+
+
 handleChange = (event) => {
     event.preventDefault()
     this.setState({game_id: event.target.value});
    
 }
 
-handleSubmit = (event) => {
-    event.preventDefault()
-    socket.emit('join', this.state.game_id)
-    socket.on('join_room', this.getData)
-    this.setState({pSign: -1})
+// handleSubmit = (event) => {
+//     event.preventDefault()
+//     this.props.socket.emit('join', this.state.game_id)
+//     this.props.socket.on('join_room', this.getData)
+//     this.setSprops{pSign: -1})
 
-}
-
-handleNewGameClick = () => {
-
-    socket.emit('create')
-    socket.on('join_room', this.getData)
-    
-}
+// }
 
 
   getData = gameData => {
@@ -59,15 +51,16 @@ handleNewGameClick = () => {
   componentDidMount(){
 
     console.log('mount_run')
-    socket.on('game_data', this.getData);
+    this.props.socket.on('game_data', this.getData);
+    
     
 }
 
 
   handlePointClick = (id) => {
       const points = this.state.points.slice();
-      socket.emit('move',
-      {player_sign:this.state.pSign,
+      this.props.socket.emit('move',
+      {player_sign:this.props.pSign,
         start: id,
         roll: this.state.dice[0],
         room:this.state.game_id
@@ -77,7 +70,7 @@ handleNewGameClick = () => {
 
   handleDiceThrow = () => {
     console.log('rolling')
-    socket.emit('roll_dice', {player_sign : this.state.pSign,
+    this.props.socket.emit('roll_dice', {player_sign : this.props.pSign,
                               room : this.state.game_id,}
                               )
   }
@@ -88,9 +81,9 @@ handleNewGameClick = () => {
   render() {
     const status = 'Next player: X';
     return (
-      <div>
-        <div className="board">
-        <div className="game-back-board">
+      
+        <div className="board" style={boardStyle}>
+        <div className="game-back-board z-depth-4">
         <div className="centre-board">
     
 
@@ -103,7 +96,7 @@ handleNewGameClick = () => {
 
         <Points row={"points-bottom"} points={this.state.points.slice(13,25)} handlePointClick={this.handlePointClick} orient={'up'}/>
 
-        <div className="bar centre"><div className="bar-gap"></div>sdf</div>
+        <div className="bar centre"><div className="bar-gap"></div>'' ''</div>
 
 
       </div>
@@ -112,11 +105,19 @@ handleNewGameClick = () => {
 
     <BearedOff bearedOff={this.state.bearedOff} />
     </div>
-       <div className="board-row">    
-       <GameIDForm value={this.state.game_id} handleChange={this.handleChange} handleSubmit={this.handleSubmit}/>
-       <NewGameButton handleNewGameClick={this.handleNewGameClick}/>
-     </div>
-     </div>
+
       );
   }
+}
+
+
+var boardStyle = {
+    display: "grid",
+    gridTemplateColumns: "1fr 0.1fr",
+    gridTemplateRowsows: "1fr",
+    gap: "10px",
+    gridArea: "board",
+   
+    
+
 }

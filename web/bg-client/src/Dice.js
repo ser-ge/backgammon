@@ -6,9 +6,12 @@ export default class Dice extends React.Component {
 
 
     render() {
-      // if(this.props.faceValue === null) return (<div></div>);
+     const {faceValue} = this.props
 
-      const face = "&#x" + String(2680 + this.props.faceValue -1) + ";"
+     const faceHex = isNaN(faceValue) ? "25a2" : String(2680 + this.props.faceValue -1)
+
+
+      const face = "&#x" + faceHex + ";"
 
       return (
 

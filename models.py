@@ -2,27 +2,59 @@ import random
 import string
 
 
-
 class Board:
-
     def __init__(self):
-        
-        
-        self.state = [0, 2, 0, 0, 0, 0, -5, 0, -3, 0, 0, 0, 5, -5, 0, 0, 0, 3, 0, 5, 0, 0, 0, 0, -2, 0]
-        self.beared_off= {1:1, -1:1}
-        self.players = {1:Player('white',1), -1:Player('black',-1)}
+
+        # self.state = [0, 2, 0, 0, 0, 0, -5, 0, -3, 0, 0, 0, 5, -5, 0, 0, 0, 3, 0, 5, 0, 0, 0, 0, -2, 0]
+        self.state = [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            -5,
+            0,
+            -3,
+            0,
+            0,
+            0,
+            0,
+            -5,
+            0,
+            0,
+            0,
+            2,
+            1,
+            5,
+            0,
+            2,
+            5,
+            0,
+            -2,
+            0,
+        ]
+
+        self.beared_off = {1: 1, -1: 1}
+        self.players = {1: Player("white", 1), -1: Player("black", -1)}
         self.turn = 1
-        self.dice = [0,0]
+        self.dice = [6, 6]
         self.id = self.generate_id()
         self.valid_moves = []
         self.dice_rolled = False
-        self.dice_hist =[]
+        self.dice_hist = []
+        self.winner = None
 
+    def add_player(self, name, sign):
+        player = Player(sign, name)
+        player.connected
+        self.players[sign] = player
+        
 
     def roll_dice(self, player_sign):
 
         if player_sign == self.turn and self.dice_rolled == False:
-            roll = [random.choice(range(1,7)) for _ in range(2)]
+            roll = [random.choice(range(1, 7)) for _ in range(2)]
 
             if roll[0] == roll[1]:
                 roll += roll
@@ -34,81 +66,86 @@ class Board:
 
         try:
             assert player == self.turn, "Not your turns!"
-
+            assert self.dice_rolled == True, "Roll the Dice!"
+            assert (
+                self.winner == None
+            ), f"{self.players[self.winner].name} has won the Game"
 
             self.print_board()
 
-        # ''' input, int player : 1 ,-1
-        #     tuple move (start_positon, dice_roll)
-            
-        #     player 1 home:  [18,24]
-        #     player -1 home: [1,6]
+            # ''' input, int player : 1 ,-1
+            #     tuple move (start_positon, dice_roll)
 
-        #     player 1 board 0
-        #     player -1 board 25
-            
-        #     '''
+            #     player 1 home:  [18,24]
+            #     player -1 home: [1,6]
+
+            #     player 1 board 0
+            #     player -1 board 25
+
+            #     '''
             start_position = move[0]
             roll = move[1]
-            print("the start: " ,start_position)
-            print("the roll: " ,roll)
+            print("the start: ", start_position)
+            print("the roll: ", roll)
 
             assert roll in self.dice, print(self.dice)
-
 
             bar = 0 if player == 1 else 25
             op_bar = 0 if player == -1 else 25
 
-            home = range(16,25) if player == 1 else range(1,7)
+            home = range(19, 25) if player == 1 else range(1, 7)
 
-            players_pieces = [max(0, player*i) for i in self.state]
+            players_pieces = [max(0, player * i) for i in self.state]
 
-            outside_home = [pieces for position, pieces in enumerate(players_pieces) if position not in home]
-
+            outside_home = [
+                pieces
+                for position, pieces in enumerate(players_pieces)
+                if position not in home
+            ]
 
             if self.state[bar] == 0 and sum(outside_home) == 0:
                 all_home = True
-                
+
             else:
                 all_home = False
-
 
             if self.state[bar] != 0 and start_position != bar:
                 return False
 
-            if not player*self.state[start_position] > 0: return False
+            if not player * self.state[start_position] > 0:
+                return False
 
-            end_positon = start_position + player*roll
+            end_positon = start_position + player * roll
 
-            if all_home and end_positon not in range(1,25) and execute:
+            if all_home and end_positon not in range(1, 25) and execute:
                 self.state[start_position] -= 1 * player
                 self.beared_off[player] += 1
-                
 
             else:
-                
-                if not end_positon in range(1,25): return False
-                
-                if not player * self.state[end_positon] >= -1: return False
+
+                if not end_positon in range(1, 25):
+                    return False
+
+                if not player * self.state[end_positon] >= -1:
+                    return False
 
                 print("moving")
-                
 
                 if execute:
                     self.state[start_position] -= 1 * player
 
-
-                    
                     if self.state[end_positon] == -player:
-                        self.state[op_bar] +=1
+                        self.state[op_bar] += 1
                         self.state[end_positon] += player
-                
-                    
+
                     self.state[end_positon] += 1 * player
 
             if execute:
                 self.dice_hist.append(roll)
                 self.dice.remove(roll)
+
+                if self.beared_off[player] == 15:
+                    self.winner = player
 
                 if len(self.dice) == 0:
                     self.turn = self.turn * -1
@@ -120,16 +157,15 @@ class Board:
 
         except AssertionError:
             return False
-    
 
-    def find_all_valid_moves(self,player):
+    def find_all_valid_moves(self, player):
 
         valid_moves = []
 
         for i in range(25):
             for roll in self.dice:
-                if self.validate_move(player, (i,roll), execute=False):
-                    valid_moves.append((i,roll))
+                if self.validate_move(player, (i, roll), execute=False):
+                    valid_moves.append((i, roll))
 
         self.valid_moves = valid_moves
         return valid_moves
@@ -139,51 +175,49 @@ class Board:
         print("beared_off", self.beared_off)
 
     def to_json(self):
-        return {'game_id':self.id,
-                'points': [{'value':value, 'id': i} for i, value in enumerate(self.state)],
-                'turn': self.turn,
-                'players': {**self.players[1].to_json(), **self.players[-1].to_json() },
-                'bearedOff': { key: list(range(value)) for key, value in self.beared_off.items()},
-                'dice': self.dice,
-                'valid_moves': self.valid_moves,
-                'diceHist' : self.dice_hist
-                }
-
-
-    @classmethod
-    def generate_id(cls):
-        return 'G'+ ''.join([str(c) for c in random.choices(string.ascii_letters, k=5)])
-
-
-class Player:
-
-    def __init__(self, color, sign):
-        
-        self.id = self.generate_id()
-
-        assert color == 'white' or color == 'black'
-        self.color = color
-        self.sign = sign
-        self.connected = False
-
-    
-    def to_json(self):
-
-        return {'user_id': self.id,
-                        'color':self.color,
-                        'sign':self.sign
+        return {
+            "game_id": self.id,
+            "points": [{"value": value, "id": i} for i, value in enumerate(self.state)],
+            "turn": self.turn,
+            "players": {**self.players[1].to_json(), **self.players[-1].to_json()},
+            "bearedOff": {
+                key: list(range(value)) for key, value in self.beared_off.items()
+            },
+            "dice": self.dice,
+            "valid_moves": self.valid_moves,
+            "diceHist": self.dice_hist,
         }
 
     @classmethod
     def generate_id(cls):
-        return 'P'+ ''.join([str(c) for c in random.choices(string.ascii_letters, k=5)])
+        return "G" + "".join(
+            [str(c) for c in random.choices(string.ascii_letters, k=5)]
+        )
+
+
+class Player:
+    def __init__(self, sign, name):
+
+
+        self.id = self.generate_id()
+        self.name = name
+        self.sign = sign
+        self.connected = False
+
+    def to_json(self):
+
+        return {"userId": self.id, "name" : self.name, "sign": self.sign, "connected": self.connected}
+
+    @classmethod
+    def generate_id(cls):
+        return "P" + "".join(
+            [str(c) for c in random.choices(string.ascii_letters, k=5)]
+        )
+
 
 if __name__ == "__main__":
 
     board = Board(rules)
 
-    print(board.validate_move(1,[1,2]))
-    print(board.validate_move(-1,[6,10]))
-
-
-    
+    print(board.validate_move(1, [1, 2]))
+    print(board.validate_move(-1, [6, 10]))

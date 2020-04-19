@@ -1,7 +1,13 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
-import Board from './Board'
-import Home from './Home'
+import Game from './Game'
+import NewGameButton from './NewGameButton'
+import socketIOClient from "socket.io-client";
+
+
+let endPoint = 'http://localhost:5000'
+
+var socket = socketIOClient(endPoint);
 
 
 class App extends Component {
@@ -9,27 +15,19 @@ class App extends Component {
         super(props);
         this.state = {  }
     }
+
     
     render() {
         return (
         <Router>
-            <div>
-              <h2>Welcome to React Router Tutorial</h2>
-              <nav className="navbar navbar-expand-lg navbar-light bg-light">
-              <ul className="navbar-nav mr-auto">
-                <li><Link to={'/'} className="nav-link"> Home </Link></li>
-                <li><Link to={'/game'} className="nav-link">Board</Link></li>
-              </ul>
-              </nav>
-              <hr />
-              <Switch>
-                  <Route exact path='/' component={Home} />
-                  <Route path='/game' component={Board} />
-              </Switch>
+            <div >
+                  <Route exact path='/' render={(props) => <NewGameButton {...props} socket={socket} />} />
+                  <Route path='/game' render={(props) => <Game {...props} socket={socket} />} />
             </div>
           </Router>
         );
       }
 }
+
  
 export default App;

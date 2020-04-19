@@ -14,19 +14,11 @@ body {
   } */
 
   
-  
-    
+
   .status {
     margin-bottom: 10px;
   }
   
-  .triangle {
-    border: none;
-    display: block;
-    margin: auto;
-    background-color: inherit;
-  
-  }
 
   .beared-checker {
     width: 90%;
@@ -37,13 +29,13 @@ body {
  
   
   .circle {
-      position:absolute;
+      position:relative;
       z-index: 2
   }
-  .svg-triangle {
+  /* .svg-triangle {
       position: relative;
       z-index: 1
-  }
+  } */
   .square:focus {
     outline: none;
   }
@@ -52,20 +44,15 @@ body {
     background: #ddd;
   } */
   button:focus {outline:0;}
-
+/* 
   .game {
     display: grid ;
     flex-direction: column;
     align-items: center;
-    /* background-image: url(./board.jpeg); */
-  }
+    background-image: url(./board.jpeg);
+  } */
 
-  .board {
-    display: grid;
-    grid-template-columns: 1fr 0.1fr;
-    grid-template-rows: 1fr;
-    gap: 10px;
-  }
+
 
   .beared-off {
     display: grid;
@@ -105,8 +92,11 @@ body {
   .game-back-board {
     background-image: url(bar2.jpeg);
     background-size: cover;
-    padding: 20px;
+    padding: 0px;
     grid-column: 1;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
 
   }
   .centre-board {
@@ -118,12 +108,16 @@ body {
     background-image: url(board.jpg);
     background-size: cover;
     justify-items: center;
+    align-self: center;
+    justify-self: center;
+    width: 95%;
+    height: 95%;
     
   }
 
 
 
-  .points-top {
+  /* .points-top {
     grid-row: 1;
     align-items: center;
     display: grid;
@@ -134,7 +128,7 @@ body {
     grid-row: 3;
     align-items: center;
     display: block;
-  }
+  } */
 
 
   .bar {
@@ -167,7 +161,7 @@ body {
 
   .bar-gap {
     grid-column: 2;
-    background-color: white;
+    background-color: #096046;
    
   }
   
@@ -181,7 +175,7 @@ body {
   }
 
   .diceFace {
-    font-size: 100px;
+    font-size: 5em;
     color: black;
     background-color: ;
     height: 20%;
