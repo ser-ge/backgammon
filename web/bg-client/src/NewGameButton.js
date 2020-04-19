@@ -22,7 +22,7 @@ export default class NewGameButton extends React.Component {
 }
 
 
-var buttonCSS = "col s12 waves-effect waves-light btn-small deep-orange darken-4 left-align"
+var buttonCSS = "waves-effect waves-light btn-small deep-orange darken-4 left-align"
 
 var buttonStyle = {
   fontSize : "1vw"

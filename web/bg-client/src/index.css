@@ -1,19 +1,9 @@
 body {
-    font: 14px "Century Gothic", Futura, sans-serif;
-    margin: 20px;
-  }
-  
-  ol, ul {
-    padding-left: 30px;
-  }
-  
-  /* .board-row:after {
-    clear: both;
-    content: "";
-    display: table;
-  } */
 
+    background-color:  #096046 
+  }
   
+
 
   .status {
     margin-bottom: 10px;
@@ -187,3 +177,15 @@ body {
     margin-left: 20px;
   }
   
+  .card span {
+    font-size: 1.2vw;
+  }
+
+  .card a {
+    font-size: 1vw;
+  }
+
+  .container {
+    width: 85%;
+  }
+
