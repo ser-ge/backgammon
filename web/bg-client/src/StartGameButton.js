@@ -2,21 +2,26 @@ import React, { Fragment } from "react";
 import { BrowserRouter as Route, Link } from "react-router-dom";
 import Game from "./Game";
 
-export default class NewGameButton extends React.Component {
+export default class StartGameButton extends React.Component {
   handleNewGameClick = () => {
-    this.props.socket.emit("create");
+    // this.props.socket.emit("create");
     // this.props.socket.on("join_room", this.getData);
   };
   render() {
     return (
       <Fragment>
-        <a
+        <Link
           className={buttonCSS}
+          to={`/game/${this.props.id}`}
           style={buttonStyle}
           onClick={this.handleNewGameClick}
         >
-          New Game
-        </a>
+          Start Game
+        </Link>
+        <Route
+          path="/game/:game_id"
+          render={(props) => <Game {...props} socket={this.props.socket} />}
+        />{" "}
       </Fragment>
     );
   }

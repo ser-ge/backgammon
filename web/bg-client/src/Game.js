@@ -7,64 +7,78 @@ import Player from "./Player";
 class Game extends Component {
   constructor(props) {
     super(props);
+
+    const {
+      socket,
+      match: { params },
+    } = this.props;
+
+    if (this.props.gameId === undefined) {
+      socket.emit("join", params.game_id);
+      console.log("GAME ---------- gameID set")
+    }
+
     this.state = {
-      pSign: 1,
+      isLoading: false,
+      gameId: params.game_id,
     };
+
+
   }
-
-  handleChange = (event) => {
-    event.preventDefault();
-    this.setState({ game_id: event.target.value });
-  };
-
-  handleSubmit = (event) => {
-    event.preventDefault();
-    this.props.socket.emit("join", this.state.game_id);
-    // socket.on('join_room', this.getData)
-    this.setState({ pSign: -1 });
-  };
 
   getData = (gameData) => {
     console.log(gameData);
     this.setState({ ...gameData });
   };
 
+  
   componentDidMount() {
     console.log("mount_run");
-    this.props.socket.on("game_data", this.getData);
+    const {
+      socket,
+      match: { params },
+      pSign,
+    } = this.props;
+
+    // const {gameId} = this.state
+
+    // if (gameId === undefined) {
+    //   socket.emit("join", params.game_id);
+    // }
+    socket.on("join", this.getData);
+    // socket.emit("player_data", gameId);
+    // socket.on("player_data", this.getData);
+
   }
 
+
+
+
   render() {
-    const { socket } = this.props;
+    const { socket , pSign, match: { params } } = this.props;
+    const { players, gameId, isLoading, opSign } = this.state;
     return (
       <Fragment>
-        {/* <div className={"row"} style={{ minHeight: "5vh" }}>
-          <div className={"row"}>
-            <NewGameButton socket={socket} />
-          </div>
-          <div className={"row"}>
-            <GameIDForm
-              value={this.state.game_id}
-              handleChange={this.handleChange}
-              handleSubmit={this.handleSubmit}
-            />
-          </div>
-        </div> */}
+        {isLoading ? (
+          <div>Loading</div>
+        ) : (
+          <Fragment>
+            <div className={"row"}>
+              <div className={"col s2"}>
+                <div style={{ height: "45vh" }}> </div>
+                <Player socket={socket} pSign={pSign} gameId={params.game_id}/>
+              </div>
 
-        <div className={"row"}>
-          <div className={"col s2"} >
-              <div style={{height:"45vh"}}> </div>
-            <Player />
-          </div>
+              <div className={"col s8"}>
+                <Board gameId={params.game_id} pSign={pSign} socket={socket} />
+              </div>
 
-          <div className={"col s8"}>
-            <Board pSign={this.state.pSign} socket={socket} />
-          </div>
-
-          <div className={"col s2"}>
-                <Player />
-          </div>
-        </div>
+              <div className={"col s2"}>
+              <Player socket={socket} pSign={pSign * -1} gameId={params.game_id}/>
+              </div>
+            </div>
+          </Fragment>
+        )}
       </Fragment>
     );
   }

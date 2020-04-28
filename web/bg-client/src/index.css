@@ -152,6 +152,9 @@ body {
   .bar-gap {
     grid-column: 2;
     background-color: #096046;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
    
   }
   

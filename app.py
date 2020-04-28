@@ -1,6 +1,7 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 from flask_socketio import SocketIO, emit, join_room
-from models import *
+from room import Room
+from models import InvalidMoveError
 
 app = Flask(__name__)
 
@@ -20,23 +21,29 @@ def sessions():
 @socketio.on("create")
 def create_game():
     print("creating game")
-    game = Board()
-    print(game.state)
+    game = Room()
     room = game.id
+    join_room(room)
+
+    p_sign = game.add_player(request.sid)
 
     ROOMS[room] = game
-    game.players[1].connected = True
-    join_room(room)
-    print(game.to_json())
+    print(f'Room:{room}, SID: {request.sid}')
+
+    emit("join", {"gameId": game.id, "pSign": p_sign}, room=request.sid)
+    print(game.player_data())
     emit("game_data", game.to_json(), room=room)
 
 
 @socketio.on("join")
 def on_join(room):
     game = ROOMS[room]
-    game.players[-1].connected = True
+    p_sign = game.add_player(request.sid)
     join_room(room)
+    emit("join", {"gameId": game.id, "pSign": p_sign,}, room=request.sid)
     emit("game_data", game.to_json(), room=room)
+    emit("player_data", game.player_data(), room=room)
+    print("player 2 has joined ------------")
 
 
 @socketio.on("roll_dice")
@@ -44,10 +51,13 @@ def on_roll(data):
     room = data["room"]
     game = ROOMS[room]
 
-    player_sign = data["player_sign"]
-    game.roll_dice(player_sign)
+    try:
+        player_sign = data["player_sign"]
+        game.roll_dice(player_sign, fix_dice=[6,3])
 
-    emit("game_data", game.to_json(), room=room)
+        emit("game_data", game.to_json(), room=room)
+    except InvalidMoveError as e:
+        print(e)
 
 
 @socketio.on("move")
@@ -58,12 +68,27 @@ def on_move(data):
 
     try:
         move = (int(data["start"]), int(data["roll"]))
-        game.validate_move(player_sign, move)
+        game.execute_move(player_sign, move)
         emit("game_data", game.to_json(), room=room)
 
-    except IndexError:
-        print("No Dice")
+    except InvalidMoveError as e:
+        print(e)
+
+
+@socketio.on("game_data")
+def on_game_data(room):
+    game = ROOMS[room]
+    print("sending game data")
+    emit("game_data", game.to_json(), room=room)
+
+@socketio.on("player_data")
+def on_player_data(room):
+    game = ROOMS[room]
+    print("sending player data")
+    emit("player_data", game.player_data(), room=room)
 
 
 if __name__ == "__main__":
     socketio.run(app, debug=True)
+
+

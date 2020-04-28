@@ -1,7 +1,10 @@
 import React, { Component } from "react";
 
 class Player extends Component {
-  state = {};
+  state = {name:"Player 1",
+           connected: false,
+           turn: false
+  };
 
   getPlayerCardStyle = (player) => {
     return {
@@ -9,29 +12,42 @@ class Player extends Component {
     };
   };
 
+  
+  getData = (gameData) => {
+
+    console.log(gameData);
+    this.setState({ ...gameData[this.props.pSign] });
+  };
+  
+  componentDidMount(){
+    const {socket, pSign, gameId} = this.props
+    console.log("player mount --------- player data request sent")
+    socket.emit("player_data", gameId)
+    socket.on("player_data", this.getData)
+  }
+
+
+
   render() {
-    const player = { name: "Player 1", pSign: 1, self: true, turn: true };
+
+
+    const {connected, name, turn} = this.state
+
+    const connectedStyle = connected ? "orange-text text-lighten-2" : "grey-text text-lighten-1"
 
     return (
-      <div class="card amber lighten-5" >
-        <div class="card-stacked">
-          <div class="card-content">
-            <span >{player.name}</span>
+      <div className="card amber lighten-5" >
+        <div className="card-stacked">
+          <div className="card-content">
+            <span className={turn && "light-green-text text-darken-3"}> {name}</span>
+      
 
           </div>
-          <div class="card-action">
-            <a className={"disable"} href="#">Connected</a>
+          <div className="card-action">
+            <span className={connectedStyle}>{connected ? "connected" : "waiting for player"} </span>
           </div>
         </div>
       </div>
-
-      // <div style={this.getPlayerCardStyle(player)}>
-      //     <img src={"https://img.icons8.com/dusk/64/000000/user.png"} style={{gridRow:"1 / 2", gridColumn:"1"}}/>
-      //     <ul style={{gridColumn:"2"}}>
-      //     <li>{player.name}</li>
-      //     <li >Status: {player.connected ? "Connected" : "Waitting for player"}</li>
-      //     </ul>
-      // </div>
     );
   }
 }

@@ -7,6 +7,7 @@ import BearedOff from "./BearedOff";
 import Square from "./Point";
 import GameIDForm from "./GameIDForm";
 import TwoDice from "./TwoDice";
+import BarPoints from "./Bar";
 
 export default class Board extends React.Component {
   constructor(props) {
@@ -14,7 +15,6 @@ export default class Board extends React.Component {
     this.state = {
       points: [],
       dice: [,],
-      game_id: "",
       move: [],
       moves: [],
       activeDice: 0,
@@ -27,13 +27,6 @@ export default class Board extends React.Component {
     this.setState({ game_id: event.target.value });
   };
 
-  // handleSubmit = (event) => {
-  //     event.preventDefault()
-  //     this.props.socket.emit('join', this.state.game_id)
-  //     this.props.socket.on('join_room', this.getData)
-  //     this.setSprops{pSign: -1})
-
-  // }
 
   getData = (gameData) => {
     console.log(gameData);
@@ -41,30 +34,41 @@ export default class Board extends React.Component {
   };
 
   componentDidMount() {
-    console.log("mount_run");
-    this.props.socket.on("game_data", this.getData);
+    const {socket, gameId, pSign} = this.props
+    console.log("BOARD ----------- game_data request sent");
+    socket.emit("game_data", gameId)
+    socket.on("game_data", this.getData);
   }
 
+  // componentDidUpdate(){
+  //   this.props.socket.on("game_data", this.getData);
+  // }
+
   handlePointClick = (id) => {
+    const {socket, gameId, pSign} = this.props
     const points = this.state.points.slice();
-    this.props.socket.emit("move", {
-      player_sign: this.props.pSign,
+    socket.emit("move", {
+      player_sign: pSign,
       start: id,
       roll: this.state.dice[0],
-      room: this.state.game_id,
+      room: gameId,
     });
   };
 
   handleDiceThrow = () => {
+    const {socket, gameId, pSign} = this.props
     console.log("rolling");
-    this.props.socket.emit("roll_dice", {
-      player_sign: this.props.pSign,
-      room: this.state.game_id,
+    socket.emit("roll_dice", {
+      player_sign: pSign,
+      room: gameId,
     });
   };
 
   render() {
     const status = "Next player: X";
+
+    const {points} = this.state
+
     return (
       <div className="board" style={boardStyle}>
         <div className="game-back-board z-depth-4">
@@ -89,7 +93,13 @@ export default class Board extends React.Component {
             />
 
             <div className="bar centre">
-              <div className="bar-gap"></div>'' ''
+              <div className="bar-gap">
+                <Points
+                  points={points.slice(0,1).concat(this.state.points.slice(-1))}
+                  handlePointClick={this.handlePointClick}
+                  row={"bar"}
+                />
+              </div>
             </div>
           </div>
         </div>

@@ -2,34 +2,46 @@ import React, { Component, Fragment } from "react";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import Game from "./Game";
 import NewGameButton from "./NewGameButton";
+import StartGameButton from "./StartGameButton";
 
 import socketIOClient from "socket.io-client";
 
 let endPoint = "http://localhost:5000";
 
-var socket = socketIOClient(endPoint);
+
 
 class App extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      socket : socketIOClient(endPoint),
+    };
   }
 
+  getData = (gameData) => {
+    console.log(gameData);
+    this.setState({ ...gameData });
+  };
+
+  componentDidMount() {
+    console.log("mount_run");
+    this.state.socket.on("join", this.getData);}
+
+
+
   render() {
+    const {socket} = this.state
     return (
       <Router>
         <div className="row">
           <nav>
-            <div class="nav-wrapper light-green darken-3">
-              <ul id="nav-mobile" class="left hide-on-med-and-down">
+            <div className="nav-wrapper light-green darken-3">
+              <ul id="nav" class="left">
                 <li>
                   <NewGameButton socket={socket} />
                 </li>
                 <li>
-                  <a href="badges.html">Components</a>
-                </li>
-                <li>
-                  <a href="collapsible.html">JavaScript</a>
+                  <StartGameButton socket={socket} id={this.state.gameId} />
                 </li>
               </ul>
             </div>
@@ -42,12 +54,12 @@ class App extends Component {
               exact
               path="/"
               render={(props) => (
-                <NewGameButton {...props} socket={socket} fullPage={true} />
+                <NewGameButton {...props} socket={socket} fullPage={true} id={this.state.game_id} />
               )}
             />
             <Route
-              path="/game"
-              render={(props) => <Game {...props} socket={socket} />}
+              path="/game/:game_id"
+              render={(props) => <Game {...props} socket={socket} gameId={this.state.gameId} pSign={this.state.pSign}/>}
             />
           </Switch>
         </div>
