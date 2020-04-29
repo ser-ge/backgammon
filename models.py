@@ -9,73 +9,91 @@ ValidatedMove = namedtuple(
 
 class Board:
     def __init__(self):
-
-        # self.state = [
-        #     0,
-        #     2,
-        #     0,
-        #     0,
-        #     0,
-        #     0,
-        #     -5,
-        #     0,
-        #     -3,
-        #     0,
-        #     0,
-        #     0,
-        #     5,
-        #     -5,
-        #     0,
-        #     0,
-        #     0,
-        #     3,
-        #     0,
-        #     5,
-        #     0,
-        #     0,
-        #     0,
-        #     0,
-        #     -2,
-        #     0,
-        # ]
-        self.state = [
-            0,
-            0,
-            0,
-            -3,
-            -2,
-            -5,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            5,
-            2,
-            5,
-            0,
-            0,
-            0,
-        ]
-
-        self.beared_off = {1: 1, -1: 1}
-        self.turn = 1
-        self.dice = [6, 6]
         self.id = self.generate_id()
+        self.score = {1: 0, -1: 0}
+        self.new_game()
+
+    def new_game(self):
         self.valid_moves = []
         self.dice_rolled = False
         self.dice_hist = []
         self.winner = None
+        self.game_points = 1
+        self.double_dice_owner = 0
+        self.beared_off = {1: 0, -1: 0}
+        self.turn = 1
+        self.dice = []
 
+              self.state = [
+            0,
+            2,
+            0,
+            0,
+            0,
+            0,
+            -5,
+            0,
+            -3,
+            0,
+            0,
+            0,
+            5,
+            -5,
+            0,
+            0,
+            0,
+            3,
+            0,
+            5,
+            0,
+            0,
+            0,
+            0,
+            -2,
+            0,
+        ]
+        # self.state = [
+        #     0,
+        #     0,
+        #     0,
+        #     -3,
+        #     -2,
+        #     -5,
+        #     0,
+        #     0,
+        #     0,
+        #     0,
+        #     0,
+        #     0,
+        #     0,
+        #     0,
+        #     0,
+        #     0,
+        #     0,
+        #     0,
+        #     0,
+        #     0,
+        #     5,
+        #     2,
+        #     5,
+        #     0,
+        #     0,
+        #     0,
+        # ]
+
+
+
+    def double(self, active_player):
+
+        if self.turn != active_player: raise InvalidMoveError("not your turn!")
+        if self.dice == 1 or self.dice == 4: raise InvalidMoveError("You can only double before you move")
+        
+        self.game_points = self.game_points * 2
+        self.double_dice_owner = -1 * active_player
+
+    def resign(self, active_player):
+        op_player = -1 * active_player
+        self.score[op_player] +=  self.game_points
 
     def roll_dice(self, player_sign, fix_dice=None):
         try:
@@ -115,7 +133,7 @@ class Board:
 
     def get_player_points(self, active_player):
 
-        """ returns list of points with opposition point values set to 0 """
+        """ returns list of points with opposition point values set to 0 and all point values postive"""
 
         return [max(0, active_player * i) for i in self.state]
 
@@ -140,7 +158,8 @@ class Board:
 
     def kill_piece(self, active_player, end_position):
         _, op_bar = self.get_bar_indices(active_player)
-        self.state[end_position] += player
+        self.state[end_position] += active_player
+        self.state[op_bar] += active_player * -1
 
     def validate_move(self, player, move):
 
@@ -314,28 +333,6 @@ class Board:
         )
 
 
-class Player:
-    def __init__(self, sign, name):
-
-        self.id = self.generate_id()
-        self.name = name
-        self.sign = sign
-        self.connected = False
-
-    def to_json(self):
-
-        return {
-            "userId": self.id,
-            "name": self.name,
-            "sign": self.sign,
-            "connected": self.connected,
-        }
-
-    @classmethod
-    def generate_id(cls):
-        return "P" + "".join(
-            [str(c) for c in random.choices(string.ascii_letters, k=5)]
-        )
 
 
 class InvalidMoveError(Exception):

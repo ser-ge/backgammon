@@ -1,7 +1,7 @@
 import random
 import string
 from collections import namedtuple
-from models import Board, Player
+from models import Board
 
 class Room(Board):
 
@@ -17,7 +17,7 @@ class Room(Board):
             
             if not name:
                 p = "1" if p_sign == 1 else "2"
-                name = "Player" + p
+                name = "Player " + p
             
             player = Player(p_sign, sid, name)
             player.connected = True
@@ -32,8 +32,9 @@ class Room(Board):
         player_data = {player.sign : player.to_json() for player in self.players.values()}
         return player_data
 
-
-
+    def slct_player_by_sid(self, sid):
+        filtered = [player for player in self.players.values() if player.sid == sid]
+        return filtered[0]
 
 
 class Player:

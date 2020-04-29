@@ -45,6 +45,12 @@ def on_join(room):
     emit("player_data", game.player_data(), room=room)
     print("player 2 has joined ------------")
 
+@socketio.on("register_player")
+def register_player(data):
+    game = ROOMS[data["room"]]
+    player = game.slct_player_by_sid(request.sid)
+    player.name = data["name"]
+    print("player" + data["name"] + "registered ----")
 
 @socketio.on("roll_dice")
 def on_roll(data):
@@ -53,7 +59,7 @@ def on_roll(data):
 
     try:
         player_sign = data["player_sign"]
-        game.roll_dice(player_sign, fix_dice=[6,3])
+        game.roll_dice(player_sign)
 
         emit("game_data", game.to_json(), room=room)
     except InvalidMoveError as e:
@@ -86,6 +92,7 @@ def on_player_data(room):
     game = ROOMS[room]
     print("sending player data")
     emit("player_data", game.player_data(), room=room)
+    print(game.player_data())
 
 
 if __name__ == "__main__":
