@@ -46,6 +46,7 @@ class Game extends Component {
     //   socket.emit("join", params.game_id);
     // }
     socket.on("join", this.getData);
+    socket.on("game_data", this.getData)
     // socket.emit("player_data", gameId);
     // socket.on("player_data", this.getData);
 
@@ -56,7 +57,7 @@ class Game extends Component {
 
   render() {
     const { socket , pSign, match: { params } } = this.props;
-    const { players, gameId, isLoading, opSign } = this.state;
+    const { players, gameId, isLoading, opSign, turn } = this.state;
     return (
       <Fragment>
         {isLoading ? (
@@ -66,7 +67,7 @@ class Game extends Component {
             <div className={"row"}>
               <div className={"col s2"}>
                 <div style={{ height: "45vh" }}> </div>
-                <Player socket={socket} pSign={pSign} gameId={params.game_id}/>
+                <Player socket={socket} turn={turn} pSign={pSign} gameId={params.game_id}/>
               </div>
 
               <div className={"col s8"}>
@@ -74,8 +75,11 @@ class Game extends Component {
               </div>
 
               <div className={"col s2"}>
-              <Player socket={socket} pSign={pSign * -1} gameId={params.game_id}/>
+              <Player socket={socket} turn={turn} pSign={pSign * -1} gameId={params.game_id}/>
               </div>
+            </div>
+            <div className="row">
+            <NewGameButton socket={socket} gameId={gameId} />
             </div>
           </Fragment>
         )}

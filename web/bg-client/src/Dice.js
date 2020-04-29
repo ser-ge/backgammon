@@ -1,22 +1,31 @@
 import React from 'react';
 
-
-export default class Dice extends React.Component {
-
+export default function Dice({ active, faceValue, handleDiceThrow }) {
 
 
-    render() {
-     const {faceValue} = this.props
+  const faceHex = isNaN(faceValue)
+    ? "25a2"
+    : String(2680 + faceValue - 1);
 
-     const faceHex = isNaN(faceValue) ? "25a2" : String(2680 + this.props.faceValue -1)
+  const face = "&#x" + faceHex + ";";
 
+  const getDiceStyle = () => {
 
-      const face = "&#x" + faceHex + ";"
+    return ({
+      fontSize: active ? "6em" : "5em",
+      color: "black",
+      height: "20%",
+    })
 
-      return (
+  };
 
-          <span onClick={this.props.handleDiceThrow} className="diceFace" dangerouslySetInnerHTML={{ __html: `${face}` }}></span>           
+  return (
+    <span
+      onClick={handleDiceThrow}
+      className="diceFace"
+      style={getDiceStyle()}
+      dangerouslySetInnerHTML={{ __html: `${face}` }}
+    ></span>
+  );
+}
 
-      );
-    }
-  }

@@ -3,7 +3,9 @@ body {
     background-color:  #096046 
   }
   
-
+  ::selection {
+    background: none;
+}
 
   .status {
     margin-bottom: 10px;
@@ -167,13 +169,6 @@ body {
 
   }
 
-  .diceFace {
-    font-size: 5em;
-    color: black;
-    background-color: ;
-    height: 20%;
-
-  }
 
   
   .game-info {
@@ -190,5 +185,6 @@ body {
 
   .container {
     width: 85%;
+    height: 85vh;
   }
 

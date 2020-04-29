@@ -3,10 +3,7 @@ import { BrowserRouter as Route, Link } from "react-router-dom";
 import Game from "./Game";
 
 export default class StartGameButton extends React.Component {
-  handleNewGameClick = () => {
-    // this.props.socket.emit("create");
-    // this.props.socket.on("join_room", this.getData);
-  };
+
   render() {
     return (
       <Fragment>
@@ -14,7 +11,7 @@ export default class StartGameButton extends React.Component {
           className={buttonCSS}
           to={`/game/${this.props.id}`}
           style={buttonStyle}
-          onClick={this.handleNewGameClick}
+          onClick={() => this.props.handleStartGameClick()}
         >
           Start Game
         </Link>
@@ -28,7 +25,7 @@ export default class StartGameButton extends React.Component {
 }
 
 var buttonCSS =
-  "waves-effect waves-light btn-small deep-orange darken-4 left-align";
+  "modal-action modal-close waves-effect waves-light btn deep-orange darken-4 left-align";
 
 var buttonStyle = {
   fontSize: "1vw",

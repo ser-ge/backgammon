@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import Game from "./Game";
 import NewGameButton from "./NewGameButton";
 import StartGameButton from "./StartGameButton";
-
+import LandingPage from './LandingPage'
 import socketIOClient from "socket.io-client";
 
 let endPoint = "http://localhost:5000";
@@ -33,7 +33,7 @@ class App extends Component {
     const {socket} = this.state
     return (
       <Router>
-        <div className="row">
+        {/* <div className="row">
           <nav>
             <div className="nav-wrapper light-green darken-3">
               <ul id="nav" class="left">
@@ -46,15 +46,16 @@ class App extends Component {
               </ul>
             </div>
           </nav>
-        </div>
+        </div> */}
 
         <div className="row">
+          
           <Switch>
             <Route
               exact
               path="/"
               render={(props) => (
-                <NewGameButton {...props} socket={socket} fullPage={true} id={this.state.game_id} />
+                <LandingPage {...props} socket={socket} id={this.state.gameId} />
               )}
             />
             <Route
@@ -62,6 +63,7 @@ class App extends Component {
               render={(props) => <Game {...props} socket={socket} gameId={this.state.gameId} pSign={this.state.pSign}/>}
             />
           </Switch>
+ 
         </div>
       </Router>
     );

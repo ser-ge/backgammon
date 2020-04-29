@@ -64,6 +64,11 @@ export default class Board extends React.Component {
     });
   };
 
+  switchDice = () => {
+    this.setState({dice : this.state.dice.reverse()})
+
+  }
+
   render() {
     const status = "Next player: X";
 
@@ -83,6 +88,7 @@ export default class Board extends React.Component {
             <TwoDice
               dice={this.state.dice}
               handleDiceThrow={this.handleDiceThrow}
+              switchDice={this.switchDice}
             />
 
             <Points

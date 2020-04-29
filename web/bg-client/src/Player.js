@@ -1,10 +1,7 @@
 import React, { Component } from "react";
 
 class Player extends Component {
-  state = {name:"Player 1",
-           connected: false,
-           turn: false
-  };
+  state = { name: "Player 1", connected: false };
 
   getPlayerCardStyle = (player) => {
     return {
@@ -12,40 +9,43 @@ class Player extends Component {
     };
   };
 
-  
   getData = (gameData) => {
-
     console.log(gameData);
     this.setState({ ...gameData[this.props.pSign] });
   };
-  
-  componentDidMount(){
-    const {socket, pSign, gameId} = this.props
-    console.log("player mount --------- player data request sent")
-    socket.emit("player_data", gameId)
-    socket.on("player_data", this.getData)
+
+  componentDidMount() {
+    const { socket, pSign, gameId } = this.props;
+    console.log("player mount --------- player data request sent");
+    socket.emit("player_data", gameId);
+    socket.on("player_data", this.getData);
   }
 
-
-
   render() {
+    const { connected, name } = this.state;
+    let {turn, pSign} = this.props
+    let isTurn = turn == pSign ? true : false
 
-
-    const {connected, name, turn} = this.state
-
-    const connectedStyle = connected ? "orange-text text-lighten-2" : "grey-text text-lighten-1"
+    const connectedStyle = connected
+      ? "orange-text text-lighten-2"
+      : "grey-text text-lighten-1";
 
     return (
-      <div className="card amber lighten-5" >
+      <div className="card amber lighten-5">
         <div className="card-stacked">
           <div className="card-content">
-            <span className={turn && "light-green-text text-darken-3"}> {name}</span>
-      
-
+            <span >
+              {" "}
+              {name}
+            </span>
           </div>
           <div className="card-action">
-            <span className={connectedStyle}>{connected ? "connected" : "waiting for player"} </span>
+            <span className={connectedStyle}>
+              {connected ? <span className={isTurn ? "light-green-text text-darken-1" : "grey-text"}>turn</span> : "waiting for player"}{" "}
+            </span>
+            
           </div>
+          {!connected && <div className="progress"><div className="indeterminate"></div></div>}
         </div>
       </div>
     );
