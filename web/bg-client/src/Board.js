@@ -22,11 +22,10 @@ export default class Board extends React.Component {
     };
   }
 
-  handleChange = (event) => {
-    event.preventDefault();
-    this.setState({ game_id: event.target.value });
+  send = (channel, data) => {
+    const { socket, gameId, pSign } = this.props;
+    socket.emit(channel, { ...data, player_sign: pSign, room: gameId });
   };
-
 
   getData = (gameData) => {
     console.log(gameData);
@@ -34,45 +33,31 @@ export default class Board extends React.Component {
   };
 
   componentDidMount() {
-    const {socket, gameId, pSign} = this.props
+    const { socket, gameId, pSign } = this.props;
     console.log("BOARD ----------- game_data request sent");
-    socket.emit("game_data", gameId)
+
     socket.on("game_data", this.getData);
   }
 
-  // componentDidUpdate(){
-  //   this.props.socket.on("game_data", this.getData);
-  // }
-
   handlePointClick = (id) => {
-    const {socket, gameId, pSign} = this.props
-    const points = this.state.points.slice();
-    socket.emit("move", {
-      player_sign: pSign,
+    this.send("move", {
       start: id,
       roll: this.state.dice[0],
-      room: gameId,
     });
   };
 
   handleDiceThrow = () => {
-    const {socket, gameId, pSign} = this.props
-    console.log("rolling");
-    socket.emit("roll_dice", {
-      player_sign: pSign,
-      room: gameId,
-    });
+    this.send("roll_dice");
   };
 
   switchDice = () => {
-    this.setState({dice : this.state.dice.reverse()})
-
-  }
+    this.setState({ dice: this.state.dice.reverse() });
+  };
 
   render() {
-    const status = "Next player: X";
 
-    const {points} = this.state
+
+    const { points } = this.state;
 
     return (
       <div className="board" style={boardStyle}>
@@ -101,7 +86,9 @@ export default class Board extends React.Component {
             <div className="bar centre">
               <div className="bar-gap">
                 <Points
-                  points={points.slice(0,1).concat(this.state.points.slice(-1))}
+                  points={points
+                    .slice(0, 1)
+                    .concat(this.state.points.slice(-1))}
                   handlePointClick={this.handlePointClick}
                   row={"bar"}
                 />

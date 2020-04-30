@@ -24,7 +24,7 @@ class Board:
         self.turn = 1
         self.dice = []
 
-              self.state = [
+        self.state = [
             0,
             2,
             0,
@@ -324,6 +324,10 @@ class Board:
             "dice": self.dice,
             "valid_moves": self.valid_moves,
             "diceHist": self.dice_hist,
+             "gamePoints" : self.game_points,
+            "doubleDiceOwner" : self.double_dice_owner,
+            "winner" : self.winner,
+            "score" : self.score
         }
 
     @classmethod

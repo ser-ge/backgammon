@@ -47,6 +47,7 @@ class Game extends Component {
     // }
     socket.on("join", this.getData);
     socket.on("game_data", this.getData)
+    socket.emit("game_data", this.props.gameId)
     // socket.emit("player_data", gameId);
     // socket.on("player_data", this.getData);
 

@@ -62,6 +62,7 @@ def on_roll(data):
         game.roll_dice(player_sign)
 
         emit("game_data", game.to_json(), room=room)
+        print(f"------- DICE ROLL: {game.dice}")
     except InvalidMoveError as e:
         print(e)
 
