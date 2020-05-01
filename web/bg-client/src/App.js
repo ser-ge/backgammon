@@ -27,26 +27,18 @@ class App extends Component {
     console.log("mount_run");
     this.state.socket.on("join", this.getData);}
 
-
+  handleNewGameClick = () => {
+      // socket.emit("create");
+  
+      fetch("http://localhost:5000/new_game", {method: 'GET', credentials: 'include' })
+        .then((response) => response.json())
+        .then((data) => this.getData(data));
+    };
 
   render() {
     const {socket} = this.state
     return (
       <Router>
-        {/* <div className="row">
-          <nav>
-            <div className="nav-wrapper light-green darken-3">
-              <ul id="nav" class="left">
-                <li>
-                  <NewGameButton socket={socket} />
-                </li>
-                <li>
-                  <StartGameButton socket={socket} id={this.state.gameId} />
-                </li>
-              </ul>
-            </div>
-          </nav>
-        </div> */}
 
         <div className="row">
           
@@ -55,12 +47,12 @@ class App extends Component {
               exact
               path="/"
               render={(props) => (
-                <LandingPage {...props} socket={socket} id={this.state.gameId} />
+                <LandingPage {...props} socket={socket} id={this.state.gameId} handleNewGameClick={this.handleNewGameClick}/>
               )}
             />
             <Route
               path="/game/:game_id"
-              render={(props) => <Game {...props} socket={socket} gameId={this.state.gameId} pSign={this.state.pSign}/>}
+              render={(props) => <Game {...props} socket={socket} newGameId={this.state.gameId} pSignProp={this.state.pSign} handleNewGameClick={this.handleNewGameClick}/>}
             />
           </Switch>
  

@@ -10,7 +10,7 @@ class Room(Board):
         self.players = {1:Player(1, "", ""), -1: Player(-1, "", "")}
         self.open_seats = {-1, 1}
 
-    def add_player(self, sid, name=None):
+    def add_player(self, sid=None, name=None):
 
         try:
             p_sign = self.open_seats.pop()
@@ -27,14 +27,17 @@ class Room(Board):
         except KeyError as e:
             print("no seats left at table")
 
-    def player_data(self):
-
-        player_data = {player.sign : player.to_json() for player in self.players.values()}
-        return player_data
-
+ 
     def slct_player_by_sid(self, sid):
         filtered = [player for player in self.players.values() if player.sid == sid]
         return filtered[0]
+
+    def to_json(self):
+        json = super().to_json()
+        player_data = {player.sign : player.to_json() for player in self.players.values()}
+        json["players"] = player_data
+
+        return json
 
 
 class Player:

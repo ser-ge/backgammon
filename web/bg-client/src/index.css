@@ -164,6 +164,7 @@ body {
     grid-row: 2;
     grid-column: 1/7;
     align-self: center;
+    z-index: 15;
     
     
 

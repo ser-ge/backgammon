@@ -9,6 +9,9 @@ python = "^3.8"
 flask = "^1.1.1"
 flask-socketio = "^4.2.1"
 gevent = "^1.4.0"
+flask_session = "^0.3.1"
+werkzeug = "0.16.0"
+flask_cors = "^3.0.8"
 
 [tool.poetry.dev-dependencies]
 

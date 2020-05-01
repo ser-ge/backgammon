@@ -1,14 +1,18 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, session 
+from flask_session import Session
 from flask_socketio import SocketIO, emit, join_room
 from room import Room
 from models import InvalidMoveError
+from flask_cors import CORS
 
 app = Flask(__name__)
 
 app.config["SECRET_KEY"] = "vnkdjnfjknfl1232#"
 
-socketio = SocketIO(app, cors_allowed_origins="*")
-
+app.config['SESSION_TYPE'] = 'filesystem'
+Session(app)
+socketio = SocketIO(app, manage_session=False, cors_allowed_origins="*")
+CORS(app, supports_credentials=True)
 ROOMS = {}
 
 
@@ -18,32 +22,68 @@ def sessions():
 
 
 
-@socketio.on("create")
-def create_game():
-    print("creating game")
+
+@app.route("/new_game", methods=['GET'])
+def new_game():
+   
     game = Room()
     room = game.id
-    join_room(room)
+    p_sign = game.add_player()
+    print("creating game"+ room)
 
-    p_sign = game.add_player(request.sid)
-
+    session['gameId'] = room
+    session['pSign'] = p_sign 
     ROOMS[room] = game
-    print(f'Room:{room}, SID: {request.sid}')
+    print(session)
+    return {"gameId": game.id, "pSign": p_sign, "session":session['gameId']}
 
-    emit("join", {"gameId": game.id, "pSign": p_sign}, room=request.sid)
-    print(game.player_data())
-    emit("game_data", game.to_json(), room=room)
+@app.route("/join_game", methods=['GET'])
+def join_game():
+    room = request.args.get("game_id")
+    print("joining game")
+
+    try:
+        game = ROOMS[room]
+        print(game.id)
+        print("sessions -----")
+        print(session)
+   
+        
+
+        if "gameId" in session and session["gameId"] == room:
+            p_sign = session["pSign"]
+            game.players[p_sign].connected = True
+
+        else:
+            p_sign = game.add_player()
+            session['gameId'] = room
+            session['pSign'] = p_sign
+        
+        json = game.to_json()
+        json.update({"gameId": game.id, "pSign": p_sign})
+        return json
+
+    except KeyError as e:
+        print(e)
+        return "key error"
+
+
 
 
 @socketio.on("join")
-def on_join(room):
-    game = ROOMS[room]
-    p_sign = game.add_player(request.sid)
-    join_room(room)
-    emit("join", {"gameId": game.id, "pSign": p_sign,}, room=request.sid)
-    emit("game_data", game.to_json(), room=room)
-    emit("player_data", game.player_data(), room=room)
-    print("player 2 has joined ------------")
+def on_join(data):
+    print("JOIN: " + str(data))
+    
+    try:
+        room = data["gameId"]
+        game = ROOMS[room]
+        join_room(room)
+        emit("game_data", game.to_json(), room=room)
+        print(game.to_json())
+        # emit("player_data", game.player_data(), room=room)
+        print("player 2 has joined ------------")
+    except KeyError:
+        print(f"Rooom  does not exists")
 
 @socketio.on("register_player")
 def register_player(data):
@@ -88,12 +128,12 @@ def on_game_data(room):
     print("sending game data")
     emit("game_data", game.to_json(), room=room)
 
-@socketio.on("player_data")
-def on_player_data(room):
-    game = ROOMS[room]
-    print("sending player data")
-    emit("player_data", game.player_data(), room=room)
-    print(game.player_data())
+# @socketio.on("player_data")
+# def on_player_data(room):
+#     game = ROOMS[room]
+#     print("sending player data")
+#     emit("player_data", game.player_data(), room=room)
+#     print(game.player_data())
 
 
 if __name__ == "__main__":

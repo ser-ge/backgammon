@@ -4,42 +4,38 @@ import StartGameButton from "./StartGameButton";
 import M from "materialize-css";
 import "materialize-css/dist/css/materialize.min.css";
 
-export default function NewGameButton({ socket, gameId }) {
+export default function NewGameButton({ socket, gameId , handleNewGameClick}) {
   const [name, setName] = useState("Player 1");
-
 
   const linkRef = useRef(null);
 
-
   const copyToClipboard = (e) => {
     linkRef.current.select();
-    e.preventDefault()
+    e.preventDefault();
     document.execCommand("copy");
 
-    M.toast({html: 'Link Copied', displayLength: 500})
-  }
+    M.toast({ html: "Link Copied", displayLength: 500 });
+  };
 
   const handleNameChange = (e) => {
     setName(e.target.value);
   };
 
-  const handleNewGameClick = () => {
-    socket.emit("create");
-  };
+
 
   const handleStartGameClick = () => {
-    socket.emit("register_player", {"room": gameId, "name": name})
-    console.log("registered player " + name)
-  }
+    const data = { username: "example" };
+
+    // socket.emit("register_player", { room: gameId, name: name });
+    // console.log("registered player " + name);
+  };
 
   useEffect(() => {
     let elem = document.querySelectorAll(".modal");
 
-    const options = {"dismissable": false, opacity: 0};
+    const options = { dismissable: false, opacity: 0 };
 
     M.Modal.init(elem, options);
-
-
   }, []);
 
   return (
@@ -47,13 +43,13 @@ export default function NewGameButton({ socket, gameId }) {
       <a
         className={buttonCSS}
         style={buttonStyle}
-        onClick={handleNewGameClick}
+        onClick={() => handleNewGameClick()}
         href="#modal1"
       >
         New Game
       </a>
 
-      <div id="modal1" className="modal" >
+      <div id="modal1" className="modal">
         <div className="modal-content">
           <div className="input-field col s12">
             <input
@@ -69,32 +65,36 @@ export default function NewGameButton({ socket, gameId }) {
 
           <div className="row">
             <form className="col s12">
-          <div className="row">
-            <div className="input-field col s8">
-              <i className="material-icons prefix">link</i>
-              <textarea
-                id="game-link"
-                className="materialize-textarea"
-                ref={linkRef}
-                value={window.location.hostname + ':3000/game/'+gameId}
-              />
-              <label for="game-link">Share this link with opponent:</label>
-            </div>
-            <div className="input-field col s4">
-              <button
-                onClick={copyToClipboard}
-                className="waves-effect waves-light btn-small  "
-              >
-                Copy Link
-              </button>{" "}
-            </div>
-          </div>
-          </form>
+              <div className="row">
+                <div className="input-field col s8">
+                  <i className="material-icons prefix">link</i>
+                  <textarea
+                    id="game-link"
+                    className="materialize-textarea"
+                    ref={linkRef}
+                    value={window.location.hostname + ":3000/game/" + gameId}
+                  />
+                  <label for="game-link">Share this link with opponent:</label>
+                </div>
+                <div className="input-field col s4">
+                  <button
+                    onClick={copyToClipboard}
+                    className="waves-effect waves-light btn-small  "
+                  >
+                    Copy Link
+                  </button>{" "}
+                </div>
+              </div>
+            </form>
           </div>
         </div>
 
         <div className="modal-footer">
-          <StartGameButton handleStartGameClick={handleStartGameClick} socket={socket} id={gameId} />
+          <StartGameButton
+            handleStartGameClick={handleStartGameClick}
+            socket={socket}
+            id={gameId}
+          />
         </div>
       </div>
     </Fragment>

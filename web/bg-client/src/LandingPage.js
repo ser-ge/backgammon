@@ -3,7 +3,7 @@ import NewGameButton from "./NewGameButton";
 // import StartGameModal from './StartGameModal'
 import StartGameButton from "./StartGameButton";
 
-export default function LandingPage({ socket, id }) {
+export default function LandingPage({ socket, id , handleNewGameClick }) {
   const [gameId, setGameId] = useState("");
 
 //   useEffect(() => {
@@ -12,7 +12,7 @@ export default function LandingPage({ socket, id }) {
 
   return (
     <Fragment>
-      <NewGameButton socket={socket} gameId={id} />
+      <NewGameButton socket={socket} gameId={id} handleNewGameClick={handleNewGameClick} />
      
     </Fragment>
   );

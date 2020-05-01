@@ -73,8 +73,8 @@ export default class Point  extends React.Component {
               position:"absolute",
               transform : (id > 12 ? "scale(1,1)" : 'scale(1,-1)'),
               width :  "100%",
-              height : "100%",
-              top : "0%",
+              height : "200%",
+              top : (id > 12 ? "-100%" : '0%'),
               left : "0%",
               zIndex : "10"})
           }

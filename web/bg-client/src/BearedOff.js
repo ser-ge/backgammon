@@ -14,7 +14,7 @@ class BearedOff extends Component {
       
              <div className="beared-off-section top">
           
-            {this.props.bearedOff["-1"].map( (checkerNum) => (
+            {[...Array(this.props.bearedOff["-1"]).keys()].map( (checkerNum) => (
                 <div className="beared-checker" style={this.getCheckerStyle(checkerNum, -1)}></div> 
             )
 
@@ -24,7 +24,7 @@ class BearedOff extends Component {
             <div className="beared-off-section bottom">
 
 
-                     {this.props.bearedOff["1"].map( (checkerNum) => (
+                     {[...Array(this.props.bearedOff["1"]).keys()].map( (checkerNum) => (
                 <div className="beared-checker" style={this.getCheckerStyle(checkerNum, 1)} ></div> 
             )
 
