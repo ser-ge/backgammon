@@ -44,7 +44,7 @@ export default function Game({
   const [gameId, setGameId] = useState(newGameId);
   const [pSign, setpSign] = useState(pSignProp);
 
-  const joinUrl = "http://localhost:5000/api/join_game?game_id=" + params.game_id;
+  const joinUrl = "/api/join_game?game_id=" + params.game_id;
   console.log(joinUrl);
 
   const joinGame = (data) => {

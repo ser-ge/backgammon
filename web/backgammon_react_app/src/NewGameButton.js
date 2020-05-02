@@ -72,7 +72,7 @@ export default function NewGameButton({ socket, gameId , handleNewGameClick}) {
                     id="game-link"
                     className="materialize-textarea"
                     ref={linkRef}
-                    value={window.location.hostname + ":3000/game/" + gameId}
+                    value={window.location.hostname + "/game/" + gameId}
                   />
                   <label for="game-link">Share this link with opponent:</label>
                 </div>
