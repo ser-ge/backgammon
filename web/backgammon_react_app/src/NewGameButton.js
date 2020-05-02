@@ -2,7 +2,7 @@ import React, { Fragment, useEffect, useState, useRef } from "react";
 import { BrowserRouter as Route, Link } from "react-router-dom";
 import StartGameButton from "./StartGameButton";
 import M from "materialize-css";
-import "materialize-css/dist/css/materialize.min.css";
+// import "materialize-css/dist/css/materialize.min.css";
 
 export default function NewGameButton({ socket, gameId , handleNewGameClick}) {
   const [name, setName] = useState("Player 1");

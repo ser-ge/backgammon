@@ -30,7 +30,7 @@ class App extends Component {
   handleNewGameClick = () => {
       // socket.emit("create");
   
-      fetch("http://localhost:5000/new_game", {method: 'GET', credentials: 'include' })
+      fetch("http://localhost:5000/api/new_game", {method: 'GET', credentials: 'include' })
         .then((response) => response.json())
         .then((data) => this.getData(data));
     };

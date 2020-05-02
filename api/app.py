@@ -23,7 +23,7 @@ def sessions():
 
 
 
-@app.route("/new_game", methods=['GET'])
+@app.route("/api/new_game", methods=['GET'])
 def new_game():
    
     game = Room()
@@ -37,7 +37,7 @@ def new_game():
     print(session)
     return {"gameId": game.id, "pSign": p_sign, "session":session['gameId']}
 
-@app.route("/join_game", methods=['GET'])
+@app.route("/api/join_game", methods=['GET'])
 def join_game():
     room = request.args.get("game_id")
     print("joining game")
@@ -61,6 +61,8 @@ def join_game():
         
         json = game.to_json()
         json.update({"gameId": game.id, "pSign": p_sign})
+        print("Json")
+        print(json)
         return json
 
     except KeyError as e:
@@ -127,6 +129,14 @@ def on_game_data(room):
     game = ROOMS[room]
     print("sending game data")
     emit("game_data", game.to_json(), room=room)
+
+@socketio.on("message")
+def on_message(data):
+    print("Sending Message")
+
+    if "gameId" in session: print(session["gameId"])
+
+    emit("message", data, room=data["gameId"])
 
 # @socketio.on("player_data")
 # def on_player_data(room):

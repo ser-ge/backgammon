@@ -4,12 +4,10 @@ import ReactDOM from "react-dom";
 import "./index.css";
 import Points from "./Points";
 import BearedOff from "./BearedOff";
-import Square from "./Point";
-import GameIDForm from "./GameIDForm";
 import TwoDice from "./TwoDice";
 import BarPoints from "./Bar";
 
-export default function Board ({socket, gameId, pSign, gameData, switchDice }) {
+export default function Board ({socket,pSign, gameId, gameData, switchDice }) {
  
   // const [gameData, setGameData] = useState(gameData)
   // const [gameData, setGameData] = useState({
