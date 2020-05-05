@@ -102,8 +102,8 @@ export default function NewGameButton({ socket, gameId , handleNewGameClick}) {
 }
 
 var buttonCSS =
-  "waves-effect waves-light btn-small deep-orange darken-4 left-align modal-trigger";
+  "waves-effect waves-light btn-large deep-orange darken-4 left-align modal-trigger";
 
 var buttonStyle = {
-  fontSize: "1vw",
+  fontSize: "2vw",
 };

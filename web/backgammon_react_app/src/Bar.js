@@ -91,7 +91,7 @@ export default class Bar  extends React.Component {
     const {value, id} = this.props.point;
     const height = 300
     const width = 50
-    const r = 20
+    const r = 30
 
    
     return (

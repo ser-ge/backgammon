@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 
 class BearedOff extends Component {
     
-    getCheckerStyle = (numChecker, pSign) => (
-        {gridRowStart : pSign === 1 ? 15 - numChecker : "" ,
+    getCheckerStyle = (numChecker, pSign, section) => (
+        {gridRowStart : section === 1 ? 15 - numChecker : "" ,
         backgroundColor: pSign === -1 ? "black" : "ivory"}
 
     )
@@ -11,14 +11,18 @@ class BearedOff extends Component {
     render() {
 
         const {gamePoints} = this.props
+
+        let top = this.props.reversed ? -1 : 1
+
+        let bottom = top * -1 
    
         return ( 
          <div className="beared-off">
       
              <div className="beared-off-section top">
           
-            {[...Array(this.props.bearedOff["-1"]).keys()].map( (checkerNum) => (
-                <div className="beared-checker" style={this.getCheckerStyle(checkerNum, -1)}></div> 
+            {this.props.bearedOff[top].map( (checkerNum) => (
+                <div className="beared-checker" style={this.getCheckerStyle(checkerNum, top, -1)}></div> 
             )
 
             )}
@@ -31,8 +35,8 @@ class BearedOff extends Component {
             <div className="beared-off-section bottom">
 
 
-                     {[...Array(this.props.bearedOff["1"]).keys()].map( (checkerNum) => (
-                <div className="beared-checker" style={this.getCheckerStyle(checkerNum, 1)} ></div> 
+                     {this.props.bearedOff[bottom].map( (checkerNum) => (
+                <div className="beared-checker" style={this.getCheckerStyle(checkerNum, bottom, 1)} ></div> 
             )
 
             )} 

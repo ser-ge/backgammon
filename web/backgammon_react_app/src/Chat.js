@@ -5,8 +5,7 @@ import M from "materialize-css";
 
 export default function Chat({ socket, gameId, pSign, chatOpen_}) {
   const [messages, setMessages] = useState([
-      {text: "hi", isMine: false},
-      {text: "Hello", isMine: true}
+
   ]);
 
   const [newMessage, setNewMessage] = useState('')
@@ -57,7 +56,7 @@ export default function Chat({ socket, gameId, pSign, chatOpen_}) {
 
   useEffect(()=>{
     setChatOpen(chatOpen_)
-    notifyNewMessage(chatOpen)
+    if (messages.length > 0) {notifyNewMessage(chatOpen)}
     console.log("chatOpen: " + chatOpen)
     console.log("chatOpen_: " + chatOpen_)
     console.log("-----------CHAT MOUNTED---------- ")

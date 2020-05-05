@@ -1,8 +1,6 @@
 import Board from "./Board";
 import React, { useState, useEffect, Component, Fragment } from "react";
-import NewGameButton from "./NewGameButton";
-import GameIDForm from "./GameIDForm";
-import Player from "./Player";
+import {Redirect} from "react-router-dom"
 import Chat from "./Chat";
 import { config } from "./EndPoints";
 import M from "materialize-css";
@@ -32,10 +30,14 @@ export default function Game({
   const joinGame = (data) => {
     console.log("Fetching Data");
     console.log(data);
+    if (data.error) {
+      return (<Redirect to = {config.url.HOME} />)
+
+    }else{
     setGameData({ ...gameData, ...data });
     setpSign(data.pSign);
     setGameId(data.gameId);
-
+    }
   };
 
   const switchDice = () => {
@@ -49,7 +51,6 @@ export default function Game({
 
     setCanDouble(d);
 
-    setLoaded(false);
   };
 
 
@@ -75,20 +76,13 @@ export default function Game({
     setDoubleProposed(false);
   };
 
-  // const receiveDoubleProposal = (proposal) => {
-  //   console.log("Received Double Proposal" + proposal)
-  //   console.log(proposal)
-  //   console.log(pSign)
-  //   console.log(proposal.pSign == pSign || proposal.proposal)
-  //   if (proposal.pSign == pSign) {
-  //     return;
-  //   } else if (proposal.accept == true) {
-  //     M.toast({ html: "Oppent has proposed to double the stakes", displayLength: 1000 });
-  //     return
-  //   } else {
-  //     console.log("---setting ACCEPT -----")
-  //     setDoubleProposed(true);}
-  //   };
+  const notifyResigned = (resigner) =>{
+
+    let color = resigner == "1" ? "White" : "Black"
+    M.toast({ html: color + " has resigned", displayLength: 7000 });
+
+  }
+
 
   useEffect(() => {
     const { gameId } = gameData;
@@ -97,13 +91,40 @@ export default function Game({
       fetch(joinUrl, { method: "GET", credentials: "include" })
         .then((response) => response.json())
         .then((data) => joinGame(data))
-        .then(() => setLoaded(false));
+        // .then(() => setLoaded(false));
     }
 
     socket.emit("join", { gameId: params.game_id });
     socket.on("game_data", (updatedGameData) => updateGame(updatedGameData));
     socket.on("double", (proposal) => setProposal(proposal));
+    socket.on("resign", (resigner) => notifyResigned(resigner))
   }, []);
+
+  useEffect(()=> {
+    // if (!isLoading) {
+    //   socket.emit("join", { gameId: params.game_id });
+    //   socket.on("game_data", (updatedGameData) => updateGame(updatedGameData));
+    //   socket.on("double", (proposal) => setProposal(proposal));
+    // }
+
+    if (typeof gameData.points != "undefined"){
+      setLoaded(false)
+    }
+
+    if (gameData.winner) {
+      let color = gameData.winner == "1" ? "White" : "Black"
+      M.toast({ html: color + " won the game!", displayLength: 7000 });
+      send("restart_game")
+    }
+
+    if (gameData.doubleDiceOwner == pSign*-1) {
+      setCanDouble(false)
+    }
+    
+ 
+  }, [gameData])
+
+
 
   useEffect(()=>{
     if (doubleProposed){

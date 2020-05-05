@@ -6,7 +6,7 @@ export default class Points extends React.Component {
   
     render() {
       return this.props.points.map((point) => (
-        <Point reversed={true} point={point} onClick={this.props.handlePointClick} row={this.props.row} orient={this.props.orient}/>
+        <Point reversed={this.props.reversed} point={point} onClick={this.props.handlePointClick} row={this.props.row} orient={this.props.orient}/>
 
       ));
     }

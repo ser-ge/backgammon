@@ -24,7 +24,8 @@ export default function Board ({socket,pSign, gameId, gameData, switchDice }) {
     top : [],
     bottom : [],
     bar : []
-  } )
+  } ) // remove sections !
+  const [reversed, setReversed] = useState(false)
 
 
   const send = (channel, data) => {
@@ -56,8 +57,8 @@ export default function Board ({socket,pSign, gameId, gameData, switchDice }) {
   
     let bar = gameData.points.slice(0, 1).concat(gameData.points.slice(-1))
   
-    const isP = pSign == 1 
-  
+    const isP = pSign == 1
+    
     const sections = {
       top : isP ? top : bottom,
       bottom : isP ? bottom : top,
@@ -67,6 +68,12 @@ export default function Board ({socket,pSign, gameId, gameData, switchDice }) {
     setSections(sections)
 
   }, [gameData])
+
+  useEffect(()=>{
+    if (pSign == -1) {
+      setReversed(true)
+    }
+  },[pSign])
 
 
 
@@ -83,6 +90,7 @@ export default function Board ({socket,pSign, gameId, gameData, switchDice }) {
             points={sections.top}
             handlePointClick={handlePointClick}
             orient={"down"}
+            reversed={reversed}
           />
 
           <TwoDice
@@ -96,21 +104,23 @@ export default function Board ({socket,pSign, gameId, gameData, switchDice }) {
             points={sections.bottom}
             handlePointClick={handlePointClick}
             orient={"up"}
+            reversed={reversed}
           />
 
           <div className="bar centre">
             <div className="bar-gap">
               <Points
-                points={sections.bar}
+                points={sections.bar.reverse()}
                 handlePointClick={handlePointClick}
                 row={"bar"}
+                reversed={reversed}
               />
             </div>
           </div>
         </div>
       </div>
 
-      <BearedOff bearedOff={gameData.bearedOff} gamePoints={gameData.gamePoints} />
+      <BearedOff bearedOff={gameData.bearedOff} reversed={reversed} gamePoints={gameData.gamePoints} />
     </div>
     );
   }
@@ -122,5 +132,6 @@ var boardStyle = {
   gridTemplateRowsows: "1fr",
   gap: "10px",
   minHeight: "60vh",
+  maxWidth: "100vh"
   // minWidth: "60vw"
 };
