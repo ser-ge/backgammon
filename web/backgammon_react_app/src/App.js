@@ -4,9 +4,10 @@ import Game from "./Game";
 import NewGameButton from "./NewGameButton";
 import StartGameButton from "./StartGameButton";
 import LandingPage from './LandingPage'
-import socketIOClient from "socket.io-client";
+import io from "socket.io-client";
+import {config} from "./EndPoints"
 
-let endPoint = "http://localhost:5000";
+
 
 
 
@@ -14,7 +15,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      socket : socketIOClient(endPoint),
+      socket : io(config.url.SOCKET_URL),
     };
   }
 
@@ -30,7 +31,7 @@ class App extends Component {
   handleNewGameClick = () => {
       // socket.emit("create");
   
-      fetch("/api/new_game", {method: 'GET', credentials: 'include' })
+      fetch(config.url.NEW_GAME_URL, {method: 'GET', credentials: 'include' })
         .then((response) => response.json())
         .then((data) => this.getData(data));
     };

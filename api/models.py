@@ -83,17 +83,12 @@ class Board:
 
 
 
-    def double(self, active_player):
-
-        if self.turn != active_player: raise InvalidMoveError("not your turn!")
-        if self.dice == 1 or self.dice == 4: raise InvalidMoveError("You can only double before you move")
-        
-        self.game_points = self.game_points * 2
-        self.double_dice_owner = -1 * active_player
 
     def resign(self, active_player):
         op_player = -1 * active_player
         self.score[op_player] +=  self.game_points
+        self.new_game()
+
 
     def roll_dice(self, player_sign, fix_dice=None):
         try:
@@ -276,6 +271,22 @@ class Board:
 
         except InvalidMoveError as e:
             print(e)
+
+    def propose_double(self, active_player):
+        if self.turn != active_player: raise InvalidMoveError("not your turn!")
+        if self.dice_rolled: raise InvalidMoveError("You can only double before you move")
+        if self.double_dice_owner == -active_player: raise InvalidMoveError("You dont have the dice")
+        
+        self.double_proposed = self.game_points * 2
+        self.double_dice_owner = -1 * active_player
+
+    def accept_double(self, active_player):
+
+        if self.double_proposed < 2: raise InvalidMoveError("You can only double before you move")
+        self.game_points = self.double_proposed
+        self.double_proposed = 0
+
+
 
     def oppostion_can_enter(self, player):
 

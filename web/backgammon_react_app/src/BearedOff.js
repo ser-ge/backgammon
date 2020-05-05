@@ -7,7 +7,10 @@ class BearedOff extends Component {
         backgroundColor: pSign === -1 ? "black" : "ivory"}
 
     )
+
     render() {
+
+        const {gamePoints} = this.props
    
         return ( 
          <div className="beared-off">
@@ -19,6 +22,10 @@ class BearedOff extends Component {
             )
 
             )}
+            </div>
+            
+            <div className="double-dice">
+                <span className="value"> {gamePoints == 1 ? 64 : gamePoints}</span>
             </div>
 
             <div className="beared-off-section bottom">

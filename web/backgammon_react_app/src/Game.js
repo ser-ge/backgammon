@@ -4,6 +4,9 @@ import NewGameButton from "./NewGameButton";
 import GameIDForm from "./GameIDForm";
 import Player from "./Player";
 import Chat from "./Chat";
+import { config } from "./EndPoints";
+import M from "materialize-css";
+import TopPanel from "./TopPanel";
 
 export default function Game({
   newGameId,
@@ -12,39 +15,18 @@ export default function Game({
   match: { params },
   handleNewGameClick,
 }) {
-  const [gameData, setGameData] = useState({
-    // pSign: pSignProp,
-    // dice: [],
-    // doubleDiceOwner: [],
-    // winner: [],
-    // gameId: newGameId,
-    // points: [],
-    // bearedOff: { 1: 1, "-1": 1 },
-    // score: [],
-    // gamePoints: [],
-    // players: {
-    //   "1": {
-    //     connected: false,
-    //     name: "Player 1",
-    //     connected: false,
-    //     sign: 1,
-    //   },
-    //   "-1": {
-    //     connected: false,
-    //     name: "Player 2",
-    //     connected: false,
-    //     sign: -1,
-    //   },
-    // },
-    // turn: 1,
-  });
+  const [gameData, setGameData] = useState({});
 
   const [isLoading, setLoaded] = useState(true);
-  const [chat, showChat] = useState(true);
+  const [chat, showChat] = useState(false);
   const [gameId, setGameId] = useState(newGameId);
   const [pSign, setpSign] = useState(pSignProp);
+  const [canDouble, setCanDouble] = useState(true);
+  const [doubleProposed, setDoubleProposed] = useState(false);
+  const [proposal, setProposal] = useState({})
 
-  const joinUrl = "/api/join_game?game_id=" + params.game_id;
+
+  const joinUrl = config.url.JOIN_GAME_URL + params.game_id;
   console.log(joinUrl);
 
   const joinGame = (data) => {
@@ -53,9 +35,7 @@ export default function Game({
     setGameData({ ...gameData, ...data });
     setpSign(data.pSign);
     setGameId(data.gameId);
-  };
-  const resumeGame = () => {
-    socket.emit("game_data");
+
   };
 
   const switchDice = () => {
@@ -65,8 +45,51 @@ export default function Game({
   const updateGame = (updatedGameData) => {
     setGameData({ ...gameData, ...updatedGameData });
 
+    let  d=gameData.doubleDiceOwner == pSign * -1 ? false : true
+
+    setCanDouble(d);
+
     setLoaded(false);
   };
+
+
+
+  const send = (channel, data) => {
+    socket.emit(channel, { ...data, player_sign: pSign, room: gameId });
+    console.log("SENDING ON" + channel)
+    console.log(data)
+  };
+
+  const double = () => {
+    if (doubleProposed) {
+      send("double", { proposal: false, accept: true });
+      console.log("--unseting ACCRPT-----")
+      setDoubleProposed(false);
+    } else {
+      send("double", { proposal: true, accept: NaN });
+    }
+  };
+
+  const resign = () => {
+    send("resign");
+    setDoubleProposed(false);
+  };
+
+  // const receiveDoubleProposal = (proposal) => {
+  //   console.log("Received Double Proposal" + proposal)
+  //   console.log(proposal)
+  //   console.log(pSign)
+  //   console.log(proposal.pSign == pSign || proposal.proposal)
+  //   if (proposal.pSign == pSign) {
+  //     return;
+  //   } else if (proposal.accept == true) {
+  //     M.toast({ html: "Oppent has proposed to double the stakes", displayLength: 1000 });
+  //     return
+  //   } else {
+  //     console.log("---setting ACCEPT -----")
+  //     setDoubleProposed(true);}
+  //   };
+
   useEffect(() => {
     const { gameId } = gameData;
 
@@ -79,9 +102,33 @@ export default function Game({
 
     socket.emit("join", { gameId: params.game_id });
     socket.on("game_data", (updatedGameData) => updateGame(updatedGameData));
+    socket.on("double", (proposal) => setProposal(proposal));
   }, []);
 
-  const { players, opSign, turn } = gameData;
+  useEffect(()=>{
+    if (doubleProposed){
+      M.toast({ html: "Oppent has proposed a <strong>double<strong>: accept or resign", displayLength: 5000 });
+    }
+  }, [doubleProposed])
+
+  useEffect(()=>{
+    console.log("Received Double Proposal" + proposal)
+    console.log(proposal)
+    console.log(pSign)
+    console.log(proposal.pSign == pSign || proposal.proposal)
+    if (proposal.pSign == pSign) {
+      return;
+    } else if (proposal.accept == true) {
+      M.toast({ html: "Oppent has <strong>accepted<strong> the double", displayLength: 5000 });
+      return
+    } else if (proposal.pSign != pSign && proposal.proposal){
+      console.log("---setting ACCEPT -----")
+      setDoubleProposed(true);}
+
+  },[proposal])
+
+
+  const { gamePoints, score, players, opSign, turn } = gameData;
 
   if (isLoading) {
     return (
@@ -104,16 +151,16 @@ export default function Game({
       <Fragment>
         <div className={"row"} style={{ height: "10vh" }}></div>
         <div className={chat ? "col s9" : "col s12"}>
-     
-          <div className={"row"}>
-              <Player
+          <TopPanel
+            gameId={params.game_id}
+            pSign={pSign}
             socket={socket}
             turn={turn}
-            pSign={pSign}
-            gameId={params.game_id}
-            player={players["-1"]}
+            score={score}
+            gamePoints={gamePoints}
+            players={gameData.players}
           />
-          </div>
+
           <div className={"row"}>
             <Board
               gameId={params.game_id}
@@ -131,32 +178,53 @@ export default function Game({
               gameId={params.game_id}
               player={players["1"]}
             /></div> */}
-            <button className={"btn-flat deep-orange lighten-4 col s2"}>Player 1</button>
-            <button className={"btn deep-orange waves-effect waves-light  lighten-2 col s2 offset-s5"}>Resign</button>
+
             <button
-              className={"btn deep-orange waves-effect waves-light  lighten-2 col s2 offset-s1"}
+              className={
+                "btn deep-orange waves-effect waves-light  lighten-2 col s2 "
+              }
+              onClick={resign}
+            >
+              Resign
+            </button>
+
+            <button
+              className={
+                "btn deep-orange waves-effect waves-light  lighten-2 col s2 offset-s5 " +
+                (canDouble ? "" : "disabled")
+              }
+              onClick={double}
+            >
+              {doubleProposed ? "Accept Double" : "Double"}
+            </button>
+
+            <button
+              className={
+                "btn deep-orange waves-effect waves-light  lighten-2 col s2 offset-s1 "
+              }
               onClick={() => showChat(!chat)}
             >
               Chat
-              <i class="material-icons right">
+              <i class="material-icons left">
                 {chat ? "keyboard_arrow_right" : "keyboard_arrow_left"}
               </i>
             </button>
             {/* <button className={"btn col s3"} onClick={click}></button> */}
           </div>
         </div>
-        {chat && (
-          <div className={"col s3"}>
-            <Chat socket={socket} gameId={params.game_id} pSign={pSign} />{" "}
+
+          <div className={chat ? "col s3" : "hide"}>
+            <div className={"row"}>
+              <Chat
+                socket={socket}
+                gameId={params.game_id}
+                pSign={pSign}
+                chatOpen_={chat}
+         
+              />{" "}
+            </div>
           </div>
-        )}
-        {/* <div className="row col s12">
-          <NewGameButton
-            socket={socket}
-            gameId={params.game_id}
-            handleNewGameClick={handleNewGameClick}
-          />
-        </div> */}
+        
       </Fragment>
     );
   }

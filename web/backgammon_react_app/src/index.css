@@ -76,10 +76,41 @@ body {
     grid-row: 1;
 
   }
+  .double-dice {
+    grid-row: 2;
+    color: ivory;
+    border-style: solid;
+    border-color: ivory;
+    border-width: 0.1em;
+    padding: 0.3em;
+    width: 60%;
+    padding-bottom: 10%;
+    padding-top: 10%;
+    align-content: center;
+    justify-content: center;
+    display: flex;
+  }
+
+
+.double-dice.value {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  font-size: 10em;
+}
+
+/* .double-dice:after {
+  content: "";
+  display: block;
+  padding-top: 80%;
+} */
+
   .beared-off-section.bottom {
     grid-row: 3;
    
   }
+
+  
   
   .game-back-board {
     background-image: url(bar2.jpeg);
@@ -149,7 +180,11 @@ body {
   }
 
 
-
+  .btn-flat.truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 
   .bar-gap {
     grid-column: 2;
@@ -169,7 +204,10 @@ body {
     
 
   }
-
+  .flex {
+    display: flex;
+    flex-wrap: wrap;
+  }
 
   
   .game-info {

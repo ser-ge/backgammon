@@ -1,13 +1,17 @@
 import React, { useState, useEffect, Fragment } from "react";
 import "./chat.css";
+import M from "materialize-css";
 
-export default function Chat({ socket, gameId, pSign }) {
+
+export default function Chat({ socket, gameId, pSign, chatOpen_}) {
   const [messages, setMessages] = useState([
       {text: "hi", isMine: false},
       {text: "Hello", isMine: true}
   ]);
 
   const [newMessage, setNewMessage] = useState('')
+  const [chatOpen, setChatOpen] = useState(chatOpen_)
+  
 
 
   const handleNewMessageChange = (e) => {
@@ -24,16 +28,42 @@ export default function Chat({ socket, gameId, pSign }) {
     setNewMessage("")
   }
 
+  function notifyNewMessage(chatOpen) {
+    console.log("chatOpen " + chatOpen)
+    if (!chatOpen) {
+      console.log("notify!")
+      M.toast({ html: "New Message in Chat", displayLength: 500 });
+    }
 
-  const updateMessages = (incomingMessage, pSign) =>{
+  };
 
-    console.log(pSign)
+  const updateMessages = (incomingMessage) =>{
+
     setMessages(messages => [...messages, incomingMessage ])
+  }
+
+  const onKeyDown  = (e) => {
+    if(e.keyCode == 13 && e.shiftKey == false) {
+      e.preventDefault();
+      sendMessage()
+    }
   }
 
   useEffect(()=>{
       socket.on("message", (incomingMessage)=> updateMessages(incomingMessage))
+
+
   },[])
+
+  useEffect(()=>{
+    setChatOpen(chatOpen_)
+    notifyNewMessage(chatOpen)
+    console.log("chatOpen: " + chatOpen)
+    console.log("chatOpen_: " + chatOpen_)
+    console.log("-----------CHAT MOUNTED---------- ")
+    
+},[ messages])
+
 
   return (
     <Fragment>
@@ -72,6 +102,7 @@ export default function Chat({ socket, gameId, pSign }) {
             placeholder="Type message..."
             value={newMessage}
             onChange={handleNewMessageChange}
+            onKeyDown={onKeyDown}
           ></textarea>
           <button type="submit" class="message-submit" onClick={sendMessage}>
             Send

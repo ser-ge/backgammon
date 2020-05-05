@@ -20,6 +20,11 @@ export default function Board ({socket,pSign, gameId, gameData, switchDice }) {
   // })
 
   const [activeDice, setActiveDice] = useState(0)
+  const [sections, setSections] = useState({
+    top : [],
+    bottom : [],
+    bar : []
+  } )
 
 
   const send = (channel, data) => {
@@ -41,22 +46,30 @@ export default function Board ({socket,pSign, gameId, gameData, switchDice }) {
 
   // useEffect(() => {socket.on("game_data", (newGameData) => setGameData({...newGameData}))},[]);
 
+ 
+
+  useEffect(()=>{
+
+    let top = gameData.points.slice(1, 13).reverse();
+
+    let bottom = gameData.points.slice(13, 25)
+  
+    let bar = gameData.points.slice(0, 1).concat(gameData.points.slice(-1))
+  
+    const isP = pSign == 1 
+  
+    const sections = {
+      top : isP ? top : bottom,
+      bottom : isP ? bottom : top,
+      bar : isP ? bar : bar.reverse()
+    } 
+
+    setSections(sections)
+
+  }, [gameData])
 
 
 
-  let top = gameData.points.slice(1, 13).reverse();
-
-  let bottom = gameData.points.slice(13, 25)
-
-  let bar = gameData.points.slice(0, 1).concat(gameData.points.slice(-1))
-
-  const isP = pSign == 1 
-
-  const sections = {
-    top : isP ? top : bottom,
-    bottom : isP ? bottom : top,
-    bar : isP ? bar : bar.reverse()
-  } 
 
 
   // const { points } = gameData;
@@ -97,7 +110,7 @@ export default function Board ({socket,pSign, gameId, gameData, switchDice }) {
         </div>
       </div>
 
-      <BearedOff bearedOff={gameData.bearedOff} />
+      <BearedOff bearedOff={gameData.bearedOff} gamePoints={gameData.gamePoints} />
     </div>
     );
   }

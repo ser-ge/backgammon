@@ -43,7 +43,7 @@ export default class Point  extends React.Component {
         
         width :  "100%",
         height : "100%",
-        transform : (id > 12 ? "scale(1,1)" : 'scale(1,-1)') , 
+        transform : this.props.reversed ? (id < 13 ? "scale(1,1)" : 'scale(1,-1)') : (id > 12 ? "scale(1,1)" : 'scale(1,-1)') , 
         fill : id % 2 == 0 ? 'ivory' : 'black',
         // display : "block",
         // position : "absolute",
@@ -71,10 +71,10 @@ export default class Point  extends React.Component {
           }else{
             return ( {
               position:"absolute",
-              transform : (id > 12 ? "scale(1,1)" : 'scale(1,-1)'),
+              transform : this.props.reversed ? (id < 13 ? "scale(1,1)" : 'scale(1,-1)') : (id > 12 ? "scale(1,1)" : 'scale(1,-1)'),
               width :  "100%",
               height : "200%",
-              top : (id > 12 ? "-100%" : '0%'),
+              top : this.props.reversed ? (id < 13 ? "-100%" : '0%') : (id > 12 ? "-100%" : '0%'),
               left : "0%",
               zIndex : "10"})
           }
@@ -103,7 +103,7 @@ export default class Point  extends React.Component {
         return {
 
           className : "point",
-          gridRow : id < 13 ? "1" : "3",
+          gridRow : this.props.reversed ? (id > 12 ? "1" : "3") : (id < 13 ? "1" : "3"),
           // display : "grid",
           alignItems: "centre",
           margin: "none",

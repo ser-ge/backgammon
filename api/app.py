@@ -123,7 +123,27 @@ def on_move(data):
     except InvalidMoveError as e:
         print(e)
 
+@socketio.on("resign")
+def on_resign(data):
+    room = data["room"]
+    game = ROOMS[room]
 
+    try:
+        player_sign = data["player_sign"]
+        game.resign(player_sign)
+
+        emit("game_data", game.to_json(), room=room)
+        print(f"------- PLAYER: {player_sign} HAS RESIGNED")
+    except InvalidMoveError as e:
+        print(e)
+
+@socketio.on("restart_game")
+def on_restart_game(data):
+    room = data["room"]
+    game = ROOMS[room]
+    game.new_game()
+    emit("game_data", game.to_json(), room=room)
+   
 @socketio.on("game_data")
 def on_game_data(room):
     game = ROOMS[room]
@@ -138,12 +158,31 @@ def on_message(data):
 
     emit("message", data, room=data["gameId"])
 
-# @socketio.on("player_data")
-# def on_player_data(room):
-#     game = ROOMS[room]
-#     print("sending player data")
-#     emit("player_data", game.player_data(), room=room)
-#     print(game.player_data())
+@socketio.on("double")
+def on_double(data):
+    room = data["room"]
+    game = ROOMS[room]
+    player_sign = data["player_sign"]
+
+    try:
+        if data["proposal"]:
+            game.propose_double(player_sign)
+            print("-----DOUBLE PROPOSAL")
+            print(data)
+            emit("double", {"proposal": True, "pSign": player_sign} , room=room)
+        elif data["accept"]:
+            game.accept_double(player_sign)
+            print("-----DOUBLE Acceptance")
+            print(data)
+            emit("double", {"proposal": False, "pSign": player_sign, "accept": True},room=room )
+        else:
+            print("double data is not a proposal or acceptance")
+    except InvalidMoveError as e:
+        print(e)
+
+    emit("game_data", game.to_json(), room=room)
+
+
 
 
 if __name__ == "__main__":
