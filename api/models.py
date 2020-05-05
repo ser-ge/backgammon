@@ -87,7 +87,7 @@ class Board:
     def resign(self, active_player):
         op_player = -1 * active_player
         self.score[op_player] +=  self.game_points
-        self.new_game()
+        self.winner = op_player
 
 
     def roll_dice(self, player_sign, fix_dice=None):
@@ -356,6 +356,11 @@ class InvalidMoveError(Exception):
 
     def __str__(self):
         return f"Invalid Move: {self.message}"
+
+
+
+
+
 
 
 if __name__ == "__main__":
