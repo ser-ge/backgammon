@@ -25,7 +25,7 @@ class Board:
         self.dice = []
 
         self.state = [
-            0,
+            1,
             2,
             0,
             0,
@@ -50,7 +50,7 @@ class Board:
             0,
             0,
             -2,
-            0,
+            -1,
         ]
         # self.state = [
         #     0,
