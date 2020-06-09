@@ -1,9 +1,8 @@
-# backgammon web app
-
+# Backgammon web app
 
 A backgammon web app to quickly start and play games swith friends. 
 
-You can check it out (here)[http://www.quickbackgammon.com/]
+You can check it out [here](http://www.quickbackgammon.com/)
 
 Start a game and share the link with a friend to connect.
 
